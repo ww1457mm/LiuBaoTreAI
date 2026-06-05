@@ -38,10 +38,8 @@ Page({
   doRecognize(path) {
     if (this.data.loading) return
     this.setData({ loading: true })
-    wx.showLoading({ title: '识别中...' })
     uploadFile(path, { task: this.data.task })
       .then((res) => {
-        wx.hideLoading()
         if (res.code === 0) {
           const d = res.data
           if (d.image_url && !d.image_url.startsWith('http')) {
@@ -53,7 +51,6 @@ Page({
         }
       })
       .catch(() => {
-        wx.hideLoading()
         wx.showToast({ title: '网络错误，请检查后端', icon: 'none' })
       })
       .finally(() => this.setData({ loading: false }))

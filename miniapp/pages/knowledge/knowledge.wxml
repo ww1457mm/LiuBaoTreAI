@@ -1,20 +1,33 @@
 <view class="page">
+  <!-- 搜索栏 -->
   <view class="search-bar">
-    <input placeholder="搜索知识库" value="{{keyword}}" bindinput="onSearchInput" bindconfirm="doSearch" />
-    <button size="mini" class="search-btn" bindtap="doSearch">搜索</button>
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索知识库内容..." value="{{keyword}}" bindinput="onSearchInput" bindconfirm="doSearch" />
+    </view>
+    <button class="search-btn" bindtap="doSearch">搜索</button>
   </view>
 
-  <scroll-view class="categories" scroll-x>
-    <text class="cat {{!category?'active':''}}" data-cat="" bindtap="filterCat">全部</text>
-    <text class="cat {{category===item?'active':''}}" wx:for="{{categories}}" wx:key="*this" data-cat="{{item}}" bindtap="filterCat">{{item}}</text>
+  <!-- 分类标签 -->
+  <scroll-view class="categories" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="cat-list">
+      <text class="cat {{!category?'active':''}}" data-cat="" bindtap="filterCat">全部</text>
+      <text class="cat {{category===item?'active':''}}" wx:for="{{categories}}" wx:key="*this" data-cat="{{item}}" bindtap="filterCat">{{item}}</text>
+    </view>
   </scroll-view>
 
+  <!-- 文章列表 -->
   <view class="list">
     <view class="item card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
-      <text class="item-title">{{item.title}}</text>
-      <text class="item-cat">{{item.category}}</text>
+      <view class="item-header">
+        <text class="item-title">{{item.title}}</text>
+        <text class="item-cat">{{item.category}}</text>
+      </view>
       <text class="item-content">{{item.content}}</text>
+      <view class="item-footer">
+        <text class="read-more">阅读全文 ›</text>
+      </view>
     </view>
-    <view class="empty" wx:if="{{!loading && list.length===0}}">暂无内容</view>
+    <view class="empty-state" wx:if="{{!loading && list.length===0}}">暂无相关内容</view>
   </view>
 </view>

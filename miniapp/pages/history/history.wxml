@@ -1,28 +1,47 @@
 <view class="page">
+  <!-- 标签切换 -->
   <view class="tabs">
-    <text class="tab {{tab==='recognition'?'active':''}}" data-tab="recognition" bindtap="switchTab">识别记录</text>
-    <text class="tab {{tab==='qa'?'active':''}}" data-tab="qa" bindtap="switchTab">问答记录</text>
+    <view class="tab {{tab==='recognition'?'active':''}}" data-tab="recognition" bindtap="switchTab">
+      <text class="tab-icon">📷</text>
+      <text>识别记录</text>
+    </view>
+    <view class="tab {{tab==='qa'?'active':''}}" data-tab="qa" bindtap="switchTab">
+      <text class="tab-icon">💬</text>
+      <text>问答记录</text>
+    </view>
   </view>
 
+  <!-- 识别记录 -->
   <view wx:if="{{tab==='recognition'}}">
     <view class="card record" wx:for="{{recognition}}" wx:key="id">
       <image class="thumb" src="{{item.fullUrl}}" mode="aspectFill" wx:if="{{item.fullUrl}}" />
+      <view class="thumb placeholder-thumb" wx:else>🍃</view>
       <view class="info">
-        <text class="r-title">{{item.result}} · {{item.confidence}}</text>
+        <text class="r-title">{{item.result}}</text>
+        <text class="r-confidence">{{item.confidence}}</text>
         <text class="r-time">{{item.create_time}}</text>
         <text class="r-desc">{{item.description}}</text>
       </view>
     </view>
-    <view class="empty" wx:if="{{!recognition.length}}">暂无识别记录</view>
+    <view class="empty-state" wx:if="{{!recognition.length}}">暂无识别记录</view>
   </view>
 
+  <!-- 问答记录 -->
   <view wx:if="{{tab==='qa'}}">
-    <view class="card record" wx:for="{{qa}}" wx:key="id">
-      <text class="q">问：{{item.question}}</text>
-      <text class="a">答：{{item.answer}}</text>
-      <text class="r-time">{{item.create_time}}</text>
-      <button size="mini" bindtap="favQa" data-item="{{item}}">收藏</button>
+    <view class="card qa-record" wx:for="{{qa}}" wx:key="id">
+      <view class="qa-block question">
+        <text class="qa-label">问</text>
+        <text class="q">{{item.question}}</text>
+      </view>
+      <view class="qa-block answer">
+        <text class="qa-label">答</text>
+        <text class="a">{{item.answer}}</text>
+      </view>
+      <view class="qa-footer">
+        <text class="r-time">{{item.create_time}}</text>
+        <button class="fav-btn" size="mini" bindtap="favQa" data-item="{{item}}">⭐ 收藏</button>
+      </view>
     </view>
-    <view class="empty" wx:if="{{!qa.length}}">暂无问答记录</view>
+    <view class="empty-state" wx:if="{{!qa.length}}">暂无问答记录</view>
   </view>
 </view>

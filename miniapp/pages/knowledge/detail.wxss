@@ -1,4 +1,58 @@
-.title { font-size: 36rpx; font-weight: 600; color: #2d5a27; display: block; }
-.meta { font-size: 24rpx; color: #999; margin: 16rpx 0 24rpx; display: block; }
-.content { font-size: 28rpx; line-height: 1.8; color: #444; display: block; }
-.fav-btn { margin: 20rpx; }
+.page {
+  padding-bottom: 40rpx;
+}
+
+.detail-card {
+  margin-top: 24rpx;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  display: block;
+  line-height: 1.4;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin: 20rpx 0 28rpx;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  font-size: 24rpx;
+  color: var(--color-primary);
+  background: #eef5ec;
+  padding: 6rpx 18rpx;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.meta-source {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.divider {
+  height: 1rpx;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  margin-bottom: 28rpx;
+  opacity: 0.2;
+}
+
+.content {
+  font-size: 30rpx;
+  line-height: 2;
+  color: var(--color-text-secondary);
+  display: block;
+  text-align: justify;
+}
+
+.fav-btn {
+  margin: 0 24rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}

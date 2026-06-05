@@ -1,8 +1,12 @@
 <view class="page" wx:if="{{article}}">
-  <view class="card">
+  <view class="detail-card card">
     <text class="title">{{article.title}}</text>
-    <text class="meta">分类：{{categoryLabel}} · 来源：{{article.source}}</text>
+    <view class="meta-row">
+      <text class="meta-tag">{{categoryLabel}}</text>
+      <text class="meta-source">来源：{{article.source}}</text>
+    </view>
+    <view class="divider"></view>
     <text class="content">{{article.content}}</text>
   </view>
-  <button class="btn-primary fav-btn" bindtap="addFavorite">收藏此文</button>
+  <button class="btn-primary fav-btn" bindtap="addFavorite">⭐ 收藏此文</button>
 </view>
