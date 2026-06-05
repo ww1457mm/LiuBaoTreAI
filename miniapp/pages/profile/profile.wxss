@@ -1,0 +1,29 @@
+.user-card { display: flex; align-items: center; padding: 32rpx; gap: 24rpx; }
+.avatar-btn { padding: 0; background: none; border: none; margin: 0; line-height: 1; }
+.avatar-btn::after { border: none; }
+.avatar { width: 120rpx; height: 120rpx; border-radius: 50%; }
+.nickname { flex: 1; font-size: 32rpx; font-weight: 600; color: #2d5a27; }
+
+.menu-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  font-size: 30rpx;
+}
+.menu-row:last-child { border-bottom: none; }
+.arrow { color: #ccc; }
+
+.fav-item { margin-bottom: 16rpx; }
+.fav-title { font-size: 28rpx; font-weight: 600; color: #2d5a27; display: block; }
+.fav-type { font-size: 22rpx; color: #999; margin: 8rpx 0; display: block; }
+.fav-content {
+  font-size: 26rpx;
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+.empty { text-align: center; color: #999; padding: 40rpx; }

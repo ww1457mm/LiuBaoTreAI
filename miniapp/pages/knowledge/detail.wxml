@@ -1,0 +1,8 @@
+<view class="page" wx:if="{{article}}">
+  <view class="card">
+    <text class="title">{{article.title}}</text>
+    <text class="meta">分类：{{categoryLabel}} · 来源：{{article.source}}</text>
+    <text class="content">{{article.content}}</text>
+  </view>
+  <button class="btn-primary fav-btn" bindtap="addFavorite">收藏此文</button>
+</view>

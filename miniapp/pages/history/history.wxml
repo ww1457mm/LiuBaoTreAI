@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="tabs">
+    <text class="tab {{tab==='recognition'?'active':''}}" data-tab="recognition" bindtap="switchTab">识别记录</text>
+    <text class="tab {{tab==='qa'?'active':''}}" data-tab="qa" bindtap="switchTab">问答记录</text>
+  </view>
+
+  <view wx:if="{{tab==='recognition'}}">
+    <view class="card record" wx:for="{{recognition}}" wx:key="id">
+      <image class="thumb" src="{{item.fullUrl}}" mode="aspectFill" wx:if="{{item.fullUrl}}" />
+      <view class="info">
+        <text class="r-title">{{item.result}} · {{item.confidence}}</text>
+        <text class="r-time">{{item.create_time}}</text>
+        <text class="r-desc">{{item.description}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!recognition.length}}">暂无识别记录</view>
+  </view>
+
+  <view wx:if="{{tab==='qa'}}">
+    <view class="card record" wx:for="{{qa}}" wx:key="id">
+      <text class="q">问：{{item.question}}</text>
+      <text class="a">答：{{item.answer}}</text>
+      <text class="r-time">{{item.create_time}}</text>
+      <button size="mini" bindtap="favQa" data-item="{{item}}">收藏</button>
+    </view>
+    <view class="empty" wx:if="{{!qa.length}}">暂无问答记录</view>
+  </view>
+</view>

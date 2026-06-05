@@ -1,0 +1,34 @@
+<view class="page">
+  <swiper class="banner" indicator-dots autoplay circular interval="4000">
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <view class="banner-item" style="background: {{item.bg}}">
+        <text class="banner-title">{{item.title}}</text>
+        <text class="banner-desc">{{item.desc}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="intro card">
+    <text class="intro-title">六堡茶简介</text>
+    <text class="intro-text">六堡茶产于广西梧州，是中国黑茶代表，以「红、浓、陈、醇」及独特槟榔香著称，拥有1500余年历史。</text>
+  </view>
+
+  <view class="menu-grid">
+    <view class="menu-item" bindtap="goIdentify">
+      <text class="menu-icon">📷</text>
+      <text class="menu-label">AI识别</text>
+    </view>
+    <view class="menu-item" bindtap="goChat">
+      <text class="menu-icon">💬</text>
+      <text class="menu-label">智能问答</text>
+    </view>
+    <view class="menu-item" bindtap="goKnowledge">
+      <text class="menu-icon">📚</text>
+      <text class="menu-label">知识库</text>
+    </view>
+    <view class="menu-item" bindtap="goHistory">
+      <text class="menu-icon">📋</text>
+      <text class="menu-label">历史记录</text>
+    </view>
+  </view>
+</view>

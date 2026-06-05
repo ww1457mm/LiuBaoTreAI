@@ -1,0 +1,4 @@
+.title { font-size: 36rpx; font-weight: 600; color: #2d5a27; display: block; }
+.meta { font-size: 24rpx; color: #999; margin: 16rpx 0 24rpx; display: block; }
+.content { font-size: 28rpx; line-height: 1.8; color: #444; display: block; }
+.fav-btn { margin: 20rpx; }

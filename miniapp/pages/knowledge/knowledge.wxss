@@ -1,0 +1,20 @@
+.search-bar { display: flex; padding: 20rpx; align-items: center; gap: 16rpx; }
+.search-bar input { flex: 1; background: #fff; padding: 16rpx; border-radius: 12rpx; }
+.search-btn { background: #2d5a27; color: #fff; }
+
+.categories { white-space: nowrap; padding: 0 20rpx 16rpx; }
+.cat {
+  display: inline-block;
+  padding: 12rpx 24rpx;
+  margin-right: 12rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  color: #666;
+}
+.cat.active { background: #2d5a27; color: #fff; }
+
+.item-title { font-size: 30rpx; font-weight: 600; color: #2d5a27; display: block; }
+.item-cat { font-size: 22rpx; color: #999; margin: 8rpx 0; display: block; }
+.item-content { font-size: 26rpx; color: #666; line-height: 1.5; display: block; }
+.empty { text-align: center; color: #999; padding: 80rpx; }

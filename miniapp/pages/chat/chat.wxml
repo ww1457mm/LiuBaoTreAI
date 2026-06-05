@@ -1,0 +1,30 @@
+<view class="page">
+  <scroll-view class="chat-list" scroll-y scroll-into-view="{{scrollId}}" scroll-with-animation>
+    <view class="msg system" wx:if="{{messages.length===0}}">
+      <text>您好！我是六堡茶智能助手，可咨询历史文化、工艺、冲泡、存储与功效等。</text>
+    </view>
+    <block wx:for="{{messages}}" wx:key="id">
+      <view class="msg {{item.role}}" id="msg-{{item.id}}">
+        <text class="bubble">{{item.content}}</text>
+      </view>
+      <view class="refs" wx:if="{{item.references && item.references.length}}">
+        <text class="refs-title">参考来源</text>
+        <view class="ref-item" wx:for="{{item.references}}" wx:for-item="ref" wx:key="source">
+          <text>{{ref.title}} · {{ref.source}}</text>
+        </view>
+        <view class="recommend" wx:if="{{item.recommendations}}">
+          <text>推荐：{{item.recommendations}}</text>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <view class="quick-questions">
+    <text class="quick-tag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">{{item}}</text>
+  </view>
+
+  <view class="input-bar">
+    <input class="input" placeholder="请输入您的问题" value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
+    <button class="send-btn" bindtap="send" disabled="{{sending}}">发送</button>
+  </view>
+</view>

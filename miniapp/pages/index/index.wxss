@@ -1,0 +1,37 @@
+.page { padding-bottom: 40rpx; }
+
+.banner { height: 320rpx; }
+.banner-item {
+  height: 320rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40rpx;
+}
+.banner-title { font-size: 40rpx; color: #fff; font-weight: bold; }
+.banner-desc { font-size: 26rpx; color: rgba(255,255,255,0.9); margin-top: 16rpx; }
+
+.intro { margin-top: 20rpx; }
+.intro-title { font-size: 32rpx; font-weight: 600; color: #2d5a27; display: block; }
+.intro-text { font-size: 26rpx; color: #666; line-height: 1.7; margin-top: 12rpx; display: block; }
+
+.menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10rpx 10rpx 0;
+}
+.menu-item {
+  width: 50%;
+  box-sizing: border-box;
+  padding: 16rpx;
+}
+.menu-item {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 10rpx;
+  padding: 36rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(45,90,39,0.08);
+}
+.menu-icon { font-size: 56rpx; display: block; }
+.menu-label { font-size: 28rpx; color: #2d5a27; margin-top: 12rpx; display: block; }

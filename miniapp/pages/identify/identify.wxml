@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="task-tabs">
+    <view class="tab {{task==='variety'?'active':''}}" data-task="variety" bindtap="switchTask">品种识别</view>
+    <view class="tab {{task==='grade'?'active':''}}" data-task="grade" bindtap="switchTask">等级识别</view>
+    <view class="tab {{task==='disease'?'active':''}}" data-task="disease" bindtap="switchTask">病害识别</view>
+  </view>
+
+  <view class="preview card" wx:if="{{imagePath}}">
+    <image class="preview-img" src="{{imagePath}}" mode="aspectFit" />
+  </view>
+  <view class="preview card placeholder" wx:else>
+    <text>拍照或上传茶叶图片</text>
+  </view>
+
+  <view class="actions">
+    <button class="btn-primary" bindtap="takePhoto">拍照识别</button>
+    <button class="btn-secondary" bindtap="chooseImage">相册选择</button>
+  </view>
+
+  <view class="result card" wx:if="{{result}}">
+    <text class="result-title">识别结果</text>
+    <view class="row"><text class="label">类别</text><text class="value">{{result.category}}</text></view>
+    <view class="row"><text class="label">置信度</text><text class="value">{{result.confidence}}</text></view>
+    <view class="desc">{{result.description}}</view>
+    <view class="suggestion">建议：{{result.suggestion}}</view>
+  </view>
+</view>
