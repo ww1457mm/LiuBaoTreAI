@@ -36,3 +36,8 @@ miniapp/project.private.config.json
 *.swp
 .DS_Store
 Thumbs.db
+
+# ===== YOLO 训练数据 / 输出 =====
+ai_models/yolo/dataset/
+ai_models/yolo/liubaotea/
+runs/
