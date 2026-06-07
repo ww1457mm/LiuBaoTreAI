@@ -1,0 +1,94 @@
+<view class="page">
+  <!-- 顶部标题 -->
+  <view class="brew-header">
+    <text class="header-title">☕ 冲泡计时</text>
+    <text class="header-sub">选好茶，泡好茶</text>
+  </view>
+
+  <!-- 茶类选择 -->
+  <view class="section-title">选择茶类</view>
+  <scroll-view class="tea-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="tea-list">
+      <view
+        class="tea-card {{selected.id === item.id ? 'active' : ''}}"
+        wx:for="{{teas}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="selectTea"
+      >
+        <text class="tea-icon">{{item.icon}}</text>
+        <text class="tea-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 冲泡参数 -->
+  <view class="params card" wx:if="{{selected}}">
+    <view class="param-row">
+      <view class="param-item">
+        <text class="param-icon">🌡️</text>
+        <text class="param-label">水温</text>
+        <text class="param-value">{{selected.temp}}</text>
+      </view>
+      <view class="param-divider"></view>
+      <view class="param-item">
+        <text class="param-icon">⚖️</text>
+        <text class="param-label">茶水比</text>
+        <text class="param-value">{{selected.ratio}}</text>
+      </view>
+      <view class="param-divider"></view>
+      <view class="param-item">
+        <text class="param-icon">⏱️</text>
+        <text class="param-label">首泡</text>
+        <text class="param-value">{{selected.firstTime}}s</text>
+      </view>
+    </view>
+    <text class="param-tip">{{selected.desc}}</text>
+  </view>
+
+  <!-- 计时器区域 -->
+  <view class="timer-area" wx:if="{{selected}}">
+    <!-- 圆形进度 -->
+    <view class="timer-circle">
+      <view class="circle-bg"></view>
+      <view class="circle-progress" style="background: conic-gradient(var(--color-primary) {{progress}}%, #f0f0f0 {{progress}}%)"></view>
+      <view class="circle-inner">
+        <text class="timer-num" wx:if="{{brewing}}">{{displayTime}}</text>
+        <text class="timer-label" wx:if="{{brewing}}">秒</text>
+        <text class="timer-start-text" wx:if="{{!brewing}}">开始</text>
+      </view>
+    </view>
+
+    <!-- 泡数 -->
+    <view class="steep-info">
+      <text class="steep-label">第 {{steepCount + (brewing ? 0 : 0)}} 泡</text>
+      <text class="steep-next" wx:if="{{!brewing && steepCount > 0}}">下一泡: {{selected.firstTime + selected.increment * steepCount}}s</text>
+    </view>
+
+    <!-- 控制按钮 -->
+    <view class="controls">
+      <view class="ctrl-btn primary" wx:if="{{!brewing}}" bindtap="startBrew">
+        <text>{{steepCount === 0 ? '开始冲泡' : '第' + (steepCount + 1) + '泡'}}</text>
+      </view>
+      <block wx:if="{{brewing}}">
+        <view class="ctrl-btn secondary" bindtap="togglePause">
+          <text>{{paused ? '继续' : '暂停'}}</text>
+        </view>
+        <view class="ctrl-btn danger" bindtap="resetTimer">
+          <text>重置</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 重新开始 -->
+    <view class="restart" wx:if="{{steepCount > 0 && !brewing}}" bindtap="restartAll">
+      <text>🔄 重新开始</text>
+    </view>
+  </view>
+
+  <!-- 未选择提示 -->
+  <view class="empty-hint" wx:if="{{!selected}}">
+    <text class="hint-icon">👆</text>
+    <text class="hint-text">请先选择一种茶类</text>
+  </view>
+</view>

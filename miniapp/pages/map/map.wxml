@@ -1,0 +1,267 @@
+<view class="page">
+  <!-- 顶部标题区 -->
+  <view class="map-header">
+    <view class="header-content">
+      <text class="header-title">梧州六堡茶产业分布</text>
+      <text class="header-sub">点击产区别名查看详情</text>
+    </view>
+    <view class="header-decoration">🍃</view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索地点..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="clearSearch">✕</text>
+    </view>
+    <view class="search-btn" bindtap="onSearchConfirm" wx:if="{{searchKeyword}}">搜索</view>
+  </view>
+
+  <!-- 搜索联想结果 -->
+  <view class="search-suggestions" wx:if="{{showSearchResults && searchResults.length > 0}}">
+    <view
+      class="suggestion-item"
+      wx:for="{{searchResults}}"
+      wx:key="id"
+      data-item="{{item}}"
+      bindtap="selectSuggestion"
+    >
+      <text class="suggestion-title">{{item.title}}</text>
+      <text class="suggestion-address">{{item.address}}</text>
+    </view>
+  </view>
+
+  <!-- 地图区域 -->
+  <view class="map-wrap">
+    <map
+      id="liubaoMap"
+      class="map"
+      latitude="{{mapCenterLat}}"
+      longitude="{{mapCenterLng}}"
+      scale="{{mapScale}}"
+      markers="{{markers}}"
+      polylines="{{polylines}}"
+      bindmarkertap="onMarkerTap"
+      show-location
+      enable-3D
+      enable-overlooking
+    ></map>
+
+    <!-- 地图控制按钮组 -->
+    <view class="map-controls">
+      <view class="map-ctrl-btn" bindtap="moveToUser" hover-class="map-ctrl-hover">
+        <text class="ctrl-icon">📍</text>
+        <text class="ctrl-text">定位</text>
+      </view>
+      <view class="map-ctrl-btn" bindtap="resetMap" hover-class="map-ctrl-hover">
+        <text class="ctrl-icon">🏠</text>
+        <text class="ctrl-text">全部</text>
+      </view>
+      <view class="map-ctrl-btn" wx:if="{{navigating}}" bindtap="clearRoute" hover-class="map-ctrl-hover">
+        <text class="ctrl-icon">✕</text>
+        <text class="ctrl-text">清除</text>
+      </view>
+    </view>
+
+    <!-- 加载遮罩 -->
+    <view class="map-loading" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text>加载地图数据...</text>
+    </view>
+  </view>
+
+  <!-- 路线信息面板 -->
+  <view class="route-panel" wx:if="{{navigating && routeInfo}}">
+    <view class="route-header">
+      <view class="route-summary">
+        <text class="route-duration">{{routeInfo.durationText}}</text>
+        <text class="route-distance">{{routeInfo.distanceText}}</text>
+      </view>
+      <view class="route-modes">
+        <view
+          class="mode-btn {{navMode === 'driving' ? 'mode-active' : ''}}"
+          data-mode="driving"
+          bindtap="switchNavMode"
+        >🚗 驾车</view>
+        <view
+          class="mode-btn {{navMode === 'walking' ? 'mode-active' : ''}}"
+          data-mode="walking"
+          bindtap="switchNavMode"
+        >🚶 步行</view>
+        <view
+          class="mode-btn {{navMode === 'bicycling' ? 'mode-active' : ''}}"
+          data-mode="bicycling"
+          bindtap="switchNavMode"
+        >🚲 骑行</view>
+      </view>
+    </view>
+    <!-- 路线步骤 -->
+    <scroll-view class="route-steps" scroll-y wx:if="{{routeSteps.length > 0}}">
+      <view class="step-item" wx:for="{{routeSteps}}" wx:key="index">
+        <text class="step-num">{{item.index}}</text>
+        <view class="step-content">
+          <text class="step-text">{{item.instruction}}</text>
+          <text class="step-meta" wx:if="{{item.road_name}}">{{item.road_name}} · {{item.distanceText}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 图例 -->
+  <view class="legend card" wx:if="{{!navigating}}">
+    <text class="legend-title">产区等级</text>
+    <view class="legend-items">
+      <view class="legend-item">
+        <view class="legend-dot level-1"></view>
+        <text>核心区</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot level-2"></view>
+        <text>主产区</text>
+      </view>
+      <view class="legend-item">
+        <view class="legend-dot level-3"></view>
+        <text>一般产区</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 产区列表 -->
+  <view wx:if="{{!navigating}}">
+    <view class="section-title">
+      <text>产区列表</text>
+      <text class="section-count">共 {{regions.length}} 个产区</text>
+    </view>
+    <view class="region-list">
+      <view
+        class="region-card card"
+        wx:for="{{regions}}"
+        wx:key="id"
+        data-region="{{item}}"
+        bindtap="selectRegion"
+      >
+        <!-- 顶部：等级 + 名称 + 位置 + 距离 -->
+        <view class="region-top">
+          <view class="level-badge level-{{item.level}}">{{levelLabels[item.level]}}</view>
+          <view class="region-name-info">
+            <text class="region-name">{{item.name}}</text>
+            <view class="region-meta-row">
+              <text class="region-location">📍 {{item.location}}</text>
+              <text class="region-distance" wx:if="{{item.distanceText}}">· {{item.distanceText}}</text>
+            </view>
+          </view>
+          <text class="region-arrow">›</text>
+        </view>
+
+        <!-- 品质特点 -->
+        <text class="region-char" wx:if="{{item.characteristic}}">{{item.characteristic}}</text>
+
+        <!-- 数据指标行 -->
+        <view class="region-metrics">
+          <view class="metric-item" wx:if="{{item.harvest_season}}">
+            <text class="metric-icon">🌱</text>
+            <view class="metric-content">
+              <text class="metric-label">采摘时节</text>
+              <text class="metric-value">{{item.harvest_season}}</text>
+            </view>
+          </view>
+          <view class="metric-item" wx:if="{{item.yield_volume}}">
+            <text class="metric-icon">📦</text>
+            <view class="metric-content">
+              <text class="metric-label">年产量</text>
+              <text class="metric-value">{{item.yield_volume}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 品牌标签 -->
+        <view class="region-tags" wx:if="{{item.brands.length}}">
+          <text class="brand-tag" wx:for="{{item.brands}}" wx:for-item="b" wx:key="*this">{{b}}</text>
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{!loading && regions.length === 0}}">暂无产区数据</view>
+    </view>
+  </view>
+
+  <!-- 产区详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail">
+    <view class="detail-sheet" catchtap="noop">
+      <!-- 关闭按钮 -->
+      <view class="detail-handle" bindtap="closeDetail">
+        <text class="handle-icon">✕</text>
+      </view>
+
+      <!-- 产区名称 -->
+      <view class="detail-header">
+        <view class="level-badge level-{{selectedRegion.level}}">{{levelLabels[selectedRegion.level]}}</view>
+        <text class="detail-name">{{selectedRegion.name}}</text>
+        <text class="detail-location">📍 {{selectedRegion.location}}</text>
+        <text class="detail-distance" wx:if="{{selectedRegion.distanceText}}">距您 {{selectedRegion.distanceText}}</text>
+      </view>
+
+      <!-- 导航按钮 -->
+      <view class="nav-buttons">
+        <view class="nav-btn nav-driving" data-mode="driving" bindtap="startNavigation">
+          <text class="nav-btn-icon">🚗</text>
+          <text class="nav-btn-text">驾车</text>
+        </view>
+        <view class="nav-btn nav-walking" data-mode="walking" bindtap="startNavigation">
+          <text class="nav-btn-icon">🚶</text>
+          <text class="nav-btn-text">步行</text>
+        </view>
+        <view class="nav-btn nav-bicycling" data-mode="bicycling" bindtap="startNavigation">
+          <text class="nav-btn-icon">🚲</text>
+          <text class="nav-btn-text">骑行</text>
+        </view>
+      </view>
+
+      <!-- 分割线 -->
+      <view class="detail-divider"></view>
+
+      <!-- 描述 -->
+      <view class="detail-section" wx:if="{{selectedRegion.description}}">
+        <text class="detail-label">产区简介</text>
+        <text class="detail-text">{{selectedRegion.description}}</text>
+      </view>
+
+      <!-- 品质特点 -->
+      <view class="detail-section" wx:if="{{selectedRegion.characteristic}}">
+        <text class="detail-label">品质特点</text>
+        <view class="detail-highlight">
+          <text>{{selectedRegion.characteristic}}</text>
+        </view>
+      </view>
+
+      <!-- 基本信息网格 -->
+      <view class="info-grid">
+        <view class="info-item" wx:if="{{selectedRegion.harvest_season}}">
+          <text class="info-icon">🌱</text>
+          <text class="info-label">采摘时节</text>
+          <text class="info-value">{{selectedRegion.harvest_season}}</text>
+        </view>
+        <view class="info-item" wx:if="{{selectedRegion.yield_volume}}">
+          <text class="info-icon">📦</text>
+          <text class="info-label">年产量</text>
+          <text class="info-value">{{selectedRegion.yield_volume}}</text>
+        </view>
+      </view>
+
+      <!-- 代表品牌 -->
+      <view class="detail-section" wx:if="{{selectedRegion.brands.length}}">
+        <text class="detail-label">代表品牌</text>
+        <view class="brands-list">
+          <text class="brand-chip" wx:for="{{selectedRegion.brands}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

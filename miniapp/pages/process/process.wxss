@@ -1,0 +1,325 @@
+/* 六堡茶加工工艺页面 */
+
+.page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-bottom: 48rpx;
+}
+
+/* 顶部介绍 */
+.intro-header {
+  background: linear-gradient(160deg, var(--color-primary-dark) 0%, var(--color-primary) 50%, var(--color-primary-light) 100%);
+  padding: 48rpx 32rpx 80rpx;
+  position: relative;
+}
+
+.intro-title {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.intro-sub {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 8rpx;
+}
+
+/* 加载 */
+.loading-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 60rpx;
+}
+
+.loading-spinner {
+  width: 48rpx;
+  height: 48rpx;
+  border: 4rpx solid #e0e0e0;
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 工艺阶段导航 */
+.phase-nav {
+  margin: -60rpx 24rpx 0;
+}
+
+.phase-tabs {
+  display: flex;
+  gap: 16rpx;
+  padding: 4rpx;
+}
+
+.phase-tab {
+  flex-shrink: 0;
+  padding: 16rpx 24rpx;
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+  min-width: 180rpx;
+}
+
+.phase-tab.active {
+  border-color: var(--phase-color, var(--color-primary));
+  background: #fff;
+}
+
+.phase-tab-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.phase-tab-desc {
+  display: block;
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  margin-top: 4rpx;
+}
+
+/* 流程线 */
+.process-flow {
+  margin: 32rpx 24rpx 0;
+  position: relative;
+}
+
+.stage-item {
+  display: flex;
+  margin-bottom: 8rpx;
+  position: relative;
+}
+
+.stage-phase-tag {
+  position: absolute;
+  top: 8rpx;
+  left: 64rpx;
+  font-size: 18rpx;
+  color: #fff;
+  background: #aaa;
+  padding: 2rpx 10rpx;
+  border-radius: var(--radius-full);
+  z-index: 2;
+}
+
+.phase-primary .stage-phase-tag { background: #4a8c3f; }
+.phase-refine .stage-phase-tag { background: #e67e22; }
+.phase-age .stage-phase-tag { background: #c0392b; }
+
+.stage-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20rpx;
+  padding-top: 32rpx;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+.node-circle {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(45, 90, 39, 0.3);
+  flex-shrink: 0;
+}
+
+.node-num {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.node-line {
+  width: 3rpx;
+  flex: 1;
+  background: linear-gradient(180deg, var(--color-primary) 0%, rgba(45, 90, 39, 0.2) 100%);
+  margin-top: 4rpx;
+  min-height: 20rpx;
+}
+
+.stage-item:last-child .node-line {
+  display: none;
+}
+
+.stage-card {
+  flex: 1;
+  margin: 28rpx 0 0;
+  padding: 20rpx 24rpx;
+  transition: transform 0.15s;
+}
+
+.stage-card:active {
+  transform: scale(0.98);
+}
+
+.stage-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.stage-emoji {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.stage-title-wrap {
+  flex: 1;
+}
+
+.stage-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stage-duration {
+  display: block;
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-top: 4rpx;
+}
+
+.stage-desc {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+}
+
+.stage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.key-point {
+  font-size: 22rpx;
+  color: var(--color-primary);
+  font-style: italic;
+  flex: 1;
+}
+
+.view-more {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* 详情弹窗 — 使用全局 .detail-mask / .detail-sheet (含 slideUp 动画) */
+.detail-sheet {
+  max-height: 85vh;
+}
+
+.handle-icon {
+  font-size: 32rpx;
+  color: #d0d0d0;
+  padding: 8rpx 16rpx;
+}
+
+.detail-emoji-wrap {
+  text-align: center;
+  margin-bottom: 8rpx;
+}
+
+.detail-emoji {
+  font-size: 72rpx;
+}
+
+.detail-phase-tag {
+  text-align: center;
+  display: block;
+  font-size: 22rpx;
+  color: #fff;
+  background: var(--color-primary);
+  padding: 4rpx 20rpx;
+  border-radius: var(--radius-full);
+  display: inline-block;
+  margin: 0 auto 12rpx;
+  width: 100%;
+}
+
+.detail-name {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.detail-duration {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 8rpx;
+}
+
+.detail-divider {
+  height: 1rpx;
+  background: #f0f0f0;
+  margin: 24rpx -32rpx;
+}
+
+.detail-section {
+  margin-bottom: 24rpx;
+}
+
+.detail-label {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 10rpx;
+}
+
+.detail-text {
+  display: block;
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.detail-highlight {
+  background: linear-gradient(135deg, #f5f0e6, #e8dfd0);
+  border-radius: var(--radius-md);
+  padding: 16rpx 20rpx;
+  border-left: 6rpx solid var(--color-primary);
+}
+
+.detail-highlight text {
+  font-size: 28rpx;
+  color: var(--color-primary-dark);
+  line-height: 1.5;
+}
+
+.detail-tips {
+  background: #f8f8f8;
+  border-radius: var(--radius-md);
+  padding: 16rpx 20rpx;
+}
+
+.detail-tips text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}

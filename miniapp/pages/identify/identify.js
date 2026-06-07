@@ -2,14 +2,9 @@ const { uploadFile, BASE_URL } = require('../../utils/request')
 
 Page({
   data: {
-    task: 'variety',
     imagePath: '',
     result: null,
     loading: false
-  },
-
-  switchTask(e) {
-    this.setData({ task: e.currentTarget.dataset.task, result: null })
   },
 
   takePhoto() {
@@ -38,7 +33,7 @@ Page({
   doRecognize(path) {
     if (this.data.loading) return
     this.setData({ loading: true })
-    uploadFile(path, { task: this.data.task })
+    uploadFile(path, { task: 'disease' })
       .then((res) => {
         if (res.code === 0) {
           const d = res.data
@@ -50,8 +45,8 @@ Page({
           wx.showToast({ title: res.message || '识别失败', icon: 'none' })
         }
       })
-      .catch(() => {
-        wx.showToast({ title: '网络错误，请检查后端', icon: 'none' })
+      .catch((err) => {
+        wx.showToast({ title: err.message || '网络错误，请检查后端', icon: 'none' })
       })
       .finally(() => this.setData({ loading: false }))
   }

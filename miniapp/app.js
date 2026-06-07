@@ -19,16 +19,24 @@ App({
     }
     wx.login({
       success: (res) => {
+        if (!res.code) {
+          const openid = 'dev_guest_' + Date.now()
+          this.globalData.openid = openid
+          wx.setStorageSync('openid', openid)
+          return
+        }
+        // 优先使用微信真实登录接口
         request({
-          url: '/api/user/login',
+          url: '/api/user/login/wechat',
           method: 'POST',
-          data: { code: res.code || 'guest' }
+          data: { code: res.code }
         }).then((data) => {
           this.globalData.openid = data.openid
           wx.setStorageSync('openid', data.openid)
           this.globalData.userInfo = data
           wx.setStorageSync('userInfo', data)
         }).catch(() => {
+          // 微信登录失败，降级为开发模式
           const openid = 'dev_guest_' + Date.now()
           this.globalData.openid = openid
           wx.setStorageSync('openid', openid)

@@ -66,6 +66,7 @@
   font-size: 26rpx;
   color: var(--color-text-secondary);
   border: 1rpx solid var(--color-border);
+  transition: all 0.2s;
 }
 
 .cat.active {
@@ -130,3 +131,5 @@
   color: var(--color-primary);
   font-weight: 500;
 }
+
+/* 加载状态 — 使用全局 .loading-wrap / .loading-spinner */

@@ -1,0 +1,89 @@
+<wxs module="util">
+module.exports = {
+  labelAt: function(idx) { return 'ABCD'[idx] || '' }
+}
+</wxs>
+
+<view class="page">
+  <!-- 开始页面 -->
+  <view class="start-screen" wx:if="{{phase === 'start'}}">
+    <view class="quiz-hero">
+      <text class="hero-icon">🧠</text>
+      <text class="hero-title">六堡茶知识闯关</text>
+      <text class="hero-sub">10道题测测你的茶知识水平</text>
+    </view>
+    <view class="best-score card" wx:if="{{bestScore > 0}}">
+      <text>🏆 最高得分：{{bestScore}} / 10</text>
+    </view>
+    <button class="btn-primary start-btn" bindtap="startQuiz">开始挑战</button>
+  </view>
+
+  <!-- 答题页面 -->
+  <view class="playing" wx:if="{{phase === 'playing'}}">
+    <!-- 进度 -->
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(current + 1) / questions.length * 100}}%"></view>
+    </view>
+    <text class="progress-text">{{current + 1}} / {{questions.length}}</text>
+
+    <!-- 题目 -->
+    <view class="question-card card">
+      <text class="question-text">{{questions[current].q}}</text>
+    </view>
+
+    <!-- 选项 — 用 JS 预计算的状态 -->
+    <view class="options">
+      <view
+        class="option {{item.isCorrect ? 'correct' : ''}} {{item.isWrong ? 'wrong' : ''}} {{item.isSelected ? 'selected' : ''}}"
+        wx:for="{{optionStates}}"
+        wx:key="text"
+        data-idx="{{index}}"
+        bindtap="selectOption"
+      >
+        <view class="option-label">{{util.labelAt(index)}}</view>
+        <text class="option-text">{{item.text}}</text>
+        <text class="option-icon" wx:if="{{item.isCorrect}}">✓</text>
+        <text class="option-icon wrong" wx:if="{{item.isWrong}}">✗</text>
+      </view>
+    </view>
+
+    <!-- 解析 -->
+    <view class="explain card" wx:if="{{answered}}">
+      <text class="explain-label">💡 解析</text>
+      <text class="explain-text">{{questions[current].explain}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <button class="btn-primary" wx:if="{{!answered}}" bindtap="confirmAnswer" disabled="{{selected < 0}}">确认答案</button>
+      <button class="btn-primary" wx:if="{{answered}}" bindtap="nextQuestion">{{current < questions.length - 1 ? '下一题' : '查看结果'}}</button>
+    </view>
+  </view>
+
+  <!-- 结果页面 -->
+  <view class="result-screen" wx:if="{{phase === 'result'}}">
+    <view class="result-card card">
+      <text class="result-icon">{{score >= 9 ? '🏆' : score >= 7 ? '🥇' : score >= 5 ? '🥈' : '📚'}}</text>
+      <text class="result-score">{{score}} / {{questions.length}}</text>
+      <text class="result-grade">{{grade}}</text>
+      <text class="result-desc" wx:if="{{score >= 9}}">茶道大师！对六堡茶了如指掌</text>
+      <text class="result-desc" wx:elif="{{score >= 7}}">茶艺精湛，继续精进</text>
+      <text class="result-desc" wx:elif="{{score >= 5}}">初窥门径，多品多学</text>
+      <text class="result-desc" wx:else>茶道新手，加油学习吧</text>
+    </view>
+
+    <!-- 答题详情 -->
+    <view class="section-title">答题详情</view>
+    <view class="result-list">
+      <view class="result-item card" wx:for="{{results}}" wx:key="id">
+        <view class="result-q">
+          <text class="result-num {{item.correct ? 'right' : 'wrong'}}">{{item.correct ? '✓' : '✗'}}</text>
+          <text class="result-question">{{item.q}}</text>
+        </view>
+        <text class="result-explain">{{item.explain}}</text>
+      </view>
+    </view>
+
+    <button class="btn-primary restart-btn" bindtap="restart">再来一局</button>
+  </view>
+</view>

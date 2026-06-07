@@ -3,14 +3,23 @@
     "pages/index/index",
     "pages/identify/identify",
     "pages/chat/chat",
+    "pages/map/map",
+    "pages/profile/profile",
     "pages/knowledge/knowledge",
     "pages/knowledge/detail",
     "pages/history/history",
-    "pages/profile/profile"
+    "pages/stats/stats",
+    "pages/process/process",
+    "pages/brew/brew",
+    "pages/journal/journal",
+    "pages/journal/edit",
+    "pages/quiz/quiz",
+    "pages/valuation/valuation",
+    "pages/recommend/recommend"
   ],
   "window": {
     "navigationBarTextStyle": "white",
-    "navigationBarTitleText": "六堡茶AI",
+    "navigationBarTitleText": "茶侦探",
     "navigationBarBackgroundColor": "#1e3d1a",
     "backgroundColor": "#f5f0e6",
     "backgroundTextStyle": "dark"
@@ -40,6 +49,12 @@
         "selectedIconPath": "images/tab-chat-active.png"
       },
       {
+        "pagePath": "pages/map/map",
+        "text": "地图",
+        "iconPath": "images/tab-map.png",
+        "selectedIconPath": "images/tab-map-active.png"
+      },
+      {
         "pagePath": "pages/profile/profile",
         "text": "我的",
         "iconPath": "images/tab-user.png",
@@ -47,6 +62,14 @@
       }
     ]
   },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于在地图上显示您附近的六堡茶产区位置"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

@@ -10,15 +10,21 @@ backend/.base/
 .venv/
 venv/
 backend/.venv/
+liubao/
 __pycache__/
 *.py[cod]
 *.egg-info/
 .pytest_cache/
 
+# ===== Node.js =====
+node_modules/
+package-lock.json
+
 # ===== 本地数据库 / 运行时数据 =====
 backend/liubao_tea.db
 backend/uploads/
 *.db
+logs/
 
 # ===== AI 模型 / 生成文件（体积大，可本地重建）=====
 ai_models/yolo/best.pt
@@ -26,9 +32,11 @@ ai_models/yolo/runs/
 ai_models/rag/index/
 *.pt
 *.onnx
+liubao5/
 
 # ===== 微信小程序私有配置 =====
 miniapp/project.private.config.json
+project.private.config.json
 
 # ===== 编辑器 / 系统垃圾文件 =====
 .vscode/
@@ -36,8 +44,3 @@ miniapp/project.private.config.json
 *.swp
 .DS_Store
 Thumbs.db
-
-# ===== YOLO 训练数据 / 输出 =====
-ai_models/yolo/dataset/
-ai_models/yolo/liubaotea/
-runs/

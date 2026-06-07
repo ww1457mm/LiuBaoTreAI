@@ -22,8 +22,11 @@
         <text class="r-time">{{item.create_time}}</text>
         <text class="r-desc">{{item.description}}</text>
       </view>
+      <view class="record-actions">
+        <text class="delete-btn" data-id="{{item.id}}" bindtap="deleteRecord">删除</text>
+      </view>
     </view>
-    <view class="empty-state" wx:if="{{!recognition.length}}">暂无识别记录</view>
+    <view class="empty-state" wx:if="{{!loading && recognition.length === 0}}">暂无识别记录</view>
   </view>
 
   <!-- 问答记录 -->
@@ -39,9 +42,18 @@
       </view>
       <view class="qa-footer">
         <text class="r-time">{{item.create_time}}</text>
-        <button class="fav-btn" size="mini" bindtap="favQa" data-item="{{item}}">⭐ 收藏</button>
+        <view class="qa-actions">
+          <button class="fav-btn" size="mini" bindtap="favQa" data-item="{{item}}">⭐ 收藏</button>
+          <text class="delete-btn" data-id="{{item.id}}" bindtap="deleteQa">删除</text>
+        </view>
       </view>
     </view>
-    <view class="empty-state" wx:if="{{!qa.length}}">暂无问答记录</view>
+    <view class="empty-state" wx:if="{{!loading && qa.length === 0}}">暂无问答记录</view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
   </view>
 </view>

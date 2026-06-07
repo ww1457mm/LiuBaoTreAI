@@ -1,0 +1,99 @@
+<view class="page">
+  <!-- 步骤选择 -->
+  <view class="wizard" wx:if="{{!showResult}}">
+    <!-- 步骤指示器 -->
+    <view class="steps">
+      <view class="step-dot {{step >= 0 ? 'active' : ''}}"></view>
+      <view class="step-line {{step >= 1 ? 'active' : ''}}"></view>
+      <view class="step-dot {{step >= 1 ? 'active' : ''}}"></view>
+      <view class="step-line {{step >= 2 ? 'active' : ''}}"></view>
+      <view class="step-dot {{step >= 2 ? 'active' : ''}}"></view>
+      <view class="step-line {{step >= 3 ? 'active' : ''}}"></view>
+      <view class="step-dot {{step >= 3 ? 'active' : ''}}"></view>
+    </view>
+
+    <!-- 第1步：口味 -->
+    <view class="step-content" wx:if="{{step === 0}}">
+      <text class="step-title">你喜欢什么口感？</text>
+      <text class="step-sub">选择你的口味偏好</text>
+      <view class="option-grid">
+        <view class="opt-card" wx:for="{{tasteOptions}}" wx:key="key" data-key="{{item.key}}" bindtap="selectOption">
+          <text class="opt-icon">{{item.icon}}</text>
+          <text class="opt-name">{{item.name}}</text>
+          <text class="opt-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第2步：预算 -->
+    <view class="step-content" wx:if="{{step === 1}}">
+      <text class="step-title">你的预算范围？</text>
+      <text class="step-sub">每斤茶叶的价格</text>
+      <view class="option-grid">
+        <view class="opt-card" wx:for="{{budgetOptions}}" wx:key="key" data-key="{{item.key}}" bindtap="selectOption">
+          <text class="opt-icon">{{item.icon}}</text>
+          <text class="opt-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第3步：用途 -->
+    <view class="step-content" wx:if="{{step === 2}}">
+      <text class="step-title">主要用途？</text>
+      <text class="step-sub">这会影响推荐方向</text>
+      <view class="option-grid">
+        <view class="opt-card" wx:for="{{purposeOptions}}" wx:key="key" data-key="{{item.key}}" bindtap="selectOption">
+          <text class="opt-icon">{{item.icon}}</text>
+          <text class="opt-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第4步：健康 -->
+    <view class="step-content" wx:if="{{step === 3}}">
+      <text class="step-title">有什么健康需求？</text>
+      <text class="step-sub">可选"无特殊需求"</text>
+      <view class="option-grid">
+        <view class="opt-card" wx:for="{{healthOptions}}" wx:key="key" data-key="{{item.key}}" bindtap="selectOption">
+          <text class="opt-icon">{{item.icon}}</text>
+          <text class="opt-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 返回按钮 -->
+    <view class="back-link" wx:if="{{step > 0}}" bindtap="prevStep">‹ 上一步</view>
+
+    <!-- 加载中 -->
+    <view class="loading-overlay" wx:if="{{loading}}">
+      <view class="loading-tea">🍵</view>
+      <text class="loading-text">AI 正在为你挑选...</text>
+    </view>
+  </view>
+
+  <!-- 推荐结果 -->
+  <view class="results" wx:if="{{showResult && result}}">
+    <view class="result-header">
+      <text class="result-title">🎯 为你推荐</text>
+      <text class="result-summary" wx:if="{{result.summary}}">{{result.summary}}</text>
+    </view>
+
+    <view class="rec-card card" wx:for="{{result.recommendations}}" wx:key="name">
+      <view class="rec-header">
+        <text class="rec-name">{{item.name}}</text>
+        <view class="rec-score">{{item.match_score}}分</view>
+      </view>
+      <view class="rec-meta">
+        <text class="rec-type" wx:if="{{item.type}}">{{item.type}}</text>
+        <text class="rec-price" wx:if="{{item.price}}">¥{{item.price}}</text>
+      </view>
+      <text class="rec-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
+      <view class="rec-tip" wx:if="{{item.brew_tip}}">
+        <text class="tip-label">冲泡建议：</text>
+        <text class="tip-text">{{item.brew_tip}}</text>
+      </view>
+    </view>
+
+    <button class="btn-primary restart-btn" bindtap="reset">重新推荐</button>
+  </view>
+</view>

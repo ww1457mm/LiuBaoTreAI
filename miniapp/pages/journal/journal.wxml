@@ -1,0 +1,77 @@
+<view class="page">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">📝 品茶日记</text>
+    <text class="page-sub">记录每一次品茶的美好</text>
+  </view>
+
+  <!-- 列表 -->
+  <view class="timeline">
+    <view class="journal-card card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="card-header">
+        <view class="card-left">
+          <text class="tea-name">{{item.tea_name}}</text>
+          <text class="tea-type-tag" wx:if="{{item.typeName}}">{{item.typeName}}</text>
+        </view>
+        <view class="stars">
+          <text wx:for="{{5}}" wx:for-item="s" wx:key="*this">{{s < item.overall_score ? '⭐' : '☆'}}</text>
+        </view>
+      </view>
+      <view class="card-body">
+        <image class="thumb" wx:if="{{item.fullUrl}}" src="{{item.fullUrl}}" mode="aspectFill" />
+        <view class="card-info">
+          <text class="flavor-text" wx:if="{{item.flavor_notes.length}}">{{item.flavor_notes}}</text>
+          <text class="notes-preview">{{item.notes}}</text>
+        </view>
+      </view>
+      <view class="card-footer">
+        <text class="date">{{item.create_time}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && list.length === 0}}">
+    <text class="empty-icon">📝</text>
+    <text>还没有品茶日记</text>
+    <text class="empty-sub">记录每一次品茶的美好</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 新建按钮 -->
+  <view class="fab" bindtap="goEdit">
+    <text class="fab-icon">✏️</text>
+  </view>
+
+  <!-- 详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail">
+    <view class="detail-sheet" catchtap="noop">
+      <view class="detail-handle" bindtap="closeDetail"><text>✕</text></view>
+      <view class="detail-header">
+        <text class="detail-name">{{detailItem.tea_name}}</text>
+        <view class="stars">
+          <text wx:for="{{5}}" wx:for-item="s" wx:key="*this">{{s < detailItem.overall_score ? '⭐' : '☆'}}</text>
+        </view>
+      </view>
+      <view class="detail-info">
+        <text class="info-row">茶类：{{detailItem.typeName}}</text>
+        <text class="info-row" wx:if="{{detailItem.origin}}">产地：{{detailItem.origin}}</text>
+        <text class="info-row" wx:if="{{detailItem.brew_temp}}">水温：{{detailItem.brew_temp}}</text>
+        <text class="info-row" wx:if="{{detailItem.flavor_notes.length}}">风味：{{detailItem.flavor_notes}}</text>
+      </view>
+      <view class="detail-notes" wx:if="{{detailItem.notes}}">
+        <text class="notes-label">品茶笔记</text>
+        <text class="notes-text">{{detailItem.notes}}</text>
+      </view>
+      <image class="detail-img" wx:if="{{detailItem.fullUrl}}" src="{{detailItem.fullUrl}}" mode="widthFix" />
+      <view class="detail-actions">
+        <button class="delete-btn" size="mini" data-id="{{detailItem.id}}" bindtap="deleteEntry">🗑️ 删除</button>
+      </view>
+    </view>
+  </view>
+</view>

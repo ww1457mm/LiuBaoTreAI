@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import List
 
 import numpy as np
@@ -12,6 +13,7 @@ SILICONFLOW_EMBED_URL = os.getenv(
 )
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-large-zh-v1.5")
 _EMBED_CACHE: dict[str, np.ndarray] = {}
+_MAX_RETRIES = 2
 
 
 def embed_texts(texts: List[str]) -> np.ndarray:
@@ -29,21 +31,25 @@ def embed_texts(texts: List[str]) -> np.ndarray:
 
 def _request_embeddings(texts: List[str]) -> List[np.ndarray]:
     if SILICONFLOW_API_KEY:
-        try:
-            import httpx
+        for attempt in range(_MAX_RETRIES):
+            try:
+                import httpx
 
-            resp = httpx.post(
-                SILICONFLOW_EMBED_URL,
-                headers={"Authorization": f"Bearer {SILICONFLOW_API_KEY}"},
-                json={"model": EMBED_MODEL, "input": texts},
-                timeout=60.0,
-            )
-            resp.raise_for_status()
-            data = resp.json()["data"]
-            data.sort(key=lambda x: x["index"])
-            return [np.array(item["embedding"], dtype=np.float32) for item in data]
-        except Exception:
-            pass
+                resp = httpx.post(
+                    SILICONFLOW_EMBED_URL,
+                    headers={"Authorization": f"Bearer {SILICONFLOW_API_KEY}"},
+                    json={"model": EMBED_MODEL, "input": texts},
+                    timeout=30.0,
+                )
+                resp.raise_for_status()
+                data = resp.json()["data"]
+                data.sort(key=lambda x: x["index"])
+                return [np.array(item["embedding"], dtype=np.float32) for item in data]
+            except Exception:
+                if attempt < _MAX_RETRIES - 1:
+                    time.sleep(1.0 * (attempt + 1))
+                    continue
+                break
     return [_local_hash_embedding(t) for t in texts]
 
 

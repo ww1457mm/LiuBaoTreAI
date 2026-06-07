@@ -24,6 +24,7 @@
   align-items: center;
   justify-content: center;
   gap: 8rpx;
+  transition: all 0.2s;
 }
 
 .tab-icon {
@@ -176,3 +177,26 @@
 }
 
 .fav-btn::after { border: none; }
+
+/* 操作按钮 */
+.record-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.delete-btn {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  padding: 8rpx 16rpx;
+}
+
+.delete-btn:active {
+  color: #e74c3c;
+}
+
+.qa-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}

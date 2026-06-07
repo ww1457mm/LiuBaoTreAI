@@ -1,0 +1,102 @@
+<view class="page">
+  <!-- 顶部介绍 -->
+  <view class="intro-header">
+    <text class="intro-title">六堡茶加工工艺流程</text>
+    <text class="intro-sub">从鲜叶到成茶，匠心传承</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-wrap" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+  </view>
+
+  <!-- 工艺阶段导航 -->
+  <scroll-view class="phase-nav" scroll-x enhanced show-scrollbar="{{false}}">
+    <view class="phase-tabs">
+      <view
+        class="phase-tab {{selectedPhase === item.id ? 'active' : ''}}"
+        wx:for="{{phases}}"
+        wx:key="id"
+        data-phase="{{item.id}}"
+        bindtap="switchPhase"
+        style="--phase-color: {{item.color}}"
+      >
+        <text class="phase-tab-name">{{item.name}}</text>
+        <text class="phase-tab-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 流程线 -->
+  <view class="process-flow">
+    <view
+      class="stage-item {{item.phase === '初制工艺' ? 'phase-primary' : item.phase === '精制工艺' ? 'phase-refine' : 'phase-age'}}"
+      wx:for="{{stages}}"
+      wx:key="id"
+      data-stage="{{item}}"
+      bindtap="selectStage"
+    >
+      <!-- 阶段标签 -->
+      <view class="stage-phase-tag">{{item.phase}}</view>
+      <!-- 步骤序号 -->
+      <view class="stage-node">
+        <view class="node-circle">
+          <text class="node-num">{{item.id}}</text>
+        </view>
+        <view class="node-line"></view>
+      </view>
+      <!-- 内容卡片 -->
+      <view class="stage-card card">
+        <view class="stage-header">
+          <text class="stage-emoji">{{item.emoji}}</text>
+          <view class="stage-title-wrap">
+            <text class="stage-name">{{item.name}}</text>
+            <text class="stage-duration">⏱ {{item.duration}}</text>
+          </view>
+        </view>
+        <text class="stage-desc">{{item.description}}</text>
+        <view class="stage-footer">
+          <text class="key-point">{{item.key_point}}</text>
+          <text class="view-more">查看详情 ›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 步骤详情弹窗 -->
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="closeDetail">
+    <view class="detail-sheet" catchtap="noop">
+      <view class="detail-handle" bindtap="closeDetail">
+        <text class="handle-icon">✕</text>
+      </view>
+
+      <view class="detail-emoji-wrap">
+        <text class="detail-emoji">{{selectedStage.emoji}}</text>
+      </view>
+      <view class="detail-phase-tag">{{selectedStage.phase}}</view>
+      <text class="detail-name">{{selectedStage.name}}</text>
+      <text class="detail-duration">⏱ {{selectedStage.duration}}</text>
+
+      <view class="detail-divider"></view>
+
+      <view class="detail-section">
+        <text class="detail-label">工艺说明</text>
+        <text class="detail-text">{{selectedStage.description}}</text>
+      </view>
+
+      <view class="detail-section">
+        <text class="detail-label">操作要点</text>
+        <view class="detail-highlight">
+          <text>{{selectedStage.key_point}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedStage.tips}}">
+        <text class="detail-label">温馨提示</text>
+        <view class="detail-tips">
+          <text>{{selectedStage.tips}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

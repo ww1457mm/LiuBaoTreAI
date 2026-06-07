@@ -1,17 +1,10 @@
 // 开发时改为本机 IP，真机调试不能用 localhost
-const BASE_URL = 'http://127.0.0.1:8000'
+const BASE_URL = 'http://127.0.0.1:8001'
+
+// 腾讯地图 SDK key
+const QQMAP_KEY = 'WP6BZ-43AKU-DJTVD-G2KG7-OGDJ7-FGBHB'
 
 module.exports = {
   BASE_URL,
-  API: {
-    LOGIN: '/api/user/login',
-    PROFILE: '/api/user/profile',
-    RECOGNITION: '/api/recognition',
-    CHAT: '/api/chat',
-    KNOWLEDGE: '/api/knowledge',
-    KNOWLEDGE_DETAIL: '/api/knowledge',
-    KNOWLEDGE_SEARCH: '/api/knowledge/search/query',
-    HISTORY: '/api/history',
-    FAVORITE: '/api/favorite'
-  }
+  QQMAP_KEY
 }

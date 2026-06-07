@@ -9,6 +9,26 @@ Page({
     quickList: ['六堡茶历史', '冲泡方法', '存储收藏', '健康功效', '制作工艺']
   },
 
+  onLoad(options) {
+    // 支持从其他页面带参数跳转
+    if (options.question) {
+      const question = decodeURIComponent(options.question)
+      this.setData({ input: question })
+      setTimeout(() => this.send(), 300)
+    }
+  },
+
+  onShow() {
+    // 支持从首页快捷问题通过 globalData 传递（switchTab 不支持 query）
+    const app = getApp()
+    if (app.globalData._pendingQuestion) {
+      const question = app.globalData._pendingQuestion
+      app.globalData._pendingQuestion = null
+      this.setData({ input: question })
+      setTimeout(() => this.send(), 300)
+    }
+  },
+
   onInput(e) {
     this.setData({ input: e.detail.value })
   },

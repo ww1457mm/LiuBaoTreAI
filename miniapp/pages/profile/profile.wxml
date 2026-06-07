@@ -53,6 +53,16 @@
       </view>
       <text class="arrow">›</text>
     </view>
+    <view class="menu-row" bindtap="goStats">
+      <view class="row-left">
+        <view class="row-icon icon-stats">📊</view>
+        <view class="row-text">
+          <text class="row-title">识别统计</text>
+          <text class="row-desc">查看识别数据可视化</text>
+        </view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
     <view class="menu-row" bindtap="goFavorites">
       <view class="row-left">
         <view class="row-icon icon-fav">⭐</view>
@@ -73,6 +83,76 @@
       </view>
       <text class="arrow">›</text>
     </view>
+    <view class="menu-row" bindtap="goJournal">
+      <view class="row-left">
+        <view class="row-icon icon-journal">📝</view>
+        <view class="row-text">
+          <text class="row-title">品茶日记</text>
+          <text class="row-desc">我的品茶记录</text>
+        </view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 识别统计卡片（内嵌展示） -->
+  <view class="section-title" wx:if="{{recognitionStats.total > 0}}">识别数据</view>
+  <view class="stats-card card" wx:if="{{recognitionStats.total > 0}}">
+    <!-- 概览数字 -->
+    <view class="stats-overview">
+      <view class="overview-item">
+        <text class="overview-num">{{recognitionStats.total}}</text>
+        <text class="overview-label">总识别</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-num normal">{{recognitionStats.normal_count}}</text>
+        <text class="overview-label">正常</text>
+      </view>
+      <view class="overview-item">
+        <text class="overview-num warning">{{recognitionStats.abnormal_count}}</text>
+        <text class="overview-label">异常</text>
+      </view>
+    </view>
+
+    <!-- 饼图：正常/异常比例 -->
+    <view class="pie-section" wx:if="{{recognitionStats.total > 0}}">
+      <text class="chart-title">正常/异常分布</text>
+      <view class="pie-wrap">
+        <view class="pie-bar">
+          <view
+            class="pie-fill normal"
+            style="width: {{recognitionStats.total > 0 ? (recognitionStats.normal_count / recognitionStats.total * 100) : 0}}%"
+          ></view>
+        </view>
+        <view class="pie-legend">
+          <view class="legend-item">
+            <view class="legend-dot normal"></view>
+            <text>正常 {{recognitionStats.normal_count}}</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot warning"></view>
+            <text>异常 {{recognitionStats.abnormal_count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 柱状图：月度趋势 -->
+    <view class="bar-section" wx:if="{{recognitionStats.monthly.length > 0}}">
+      <text class="chart-title">近月识别趋势</text>
+      <view class="bar-chart">
+        <view class="bar-row" wx:for="{{recognitionStats.monthly}}" wx:key="raw">
+          <text class="bar-label">{{item.month}}</text>
+          <view class="bar-track">
+            <view
+              class="bar-fill"
+              style="width: {{item.count > 0 ? (item.count / barMaxCount * 100) : 0}}%"
+            ></view>
+          </view>
+          <text class="bar-val">{{item.count}}</text>
+        </view>
+      </view>
+    </view>
   </view>
 
   <!-- 收藏列表 -->
@@ -81,16 +161,24 @@
       <view class="section-title">收藏列表</view>
       <text class="fav-close" bindtap="closeFavorites">收起</text>
     </view>
-    <view class="fav-item card" wx:for="{{favorites}}" wx:key="id">
-      <view class="fav-header">
-        <text class="fav-title">{{item.title}}</text>
-        <text class="fav-type">{{item.fav_type}}</text>
-      </view>
-      <text class="fav-content">{{item.content}}</text>
-      <button class="fav-remove" size="mini" data-id="{{item.id}}" bindtap="removeFav">取消收藏</button>
+    <!-- 收藏加载中 -->
+    <view class="fav-loading" wx:if="{{favLoading}}">
+      <view class="loading-spinner"></view>
+      <text>加载中...</text>
     </view>
-    <view class="empty-state" wx:if="{{!favorites.length}}">暂无收藏内容</view>
+    <!-- 收藏列表 -->
+    <block wx:if="{{!favLoading}}">
+      <view class="fav-item card" wx:for="{{favorites}}" wx:key="id">
+        <view class="fav-header">
+          <text class="fav-title">{{item.title}}</text>
+          <text class="fav-type">{{item.fav_type}}</text>
+        </view>
+        <text class="fav-content">{{item.content}}</text>
+        <button class="fav-remove" size="mini" data-id="{{item.id}}" bindtap="removeFav">取消收藏</button>
+      </view>
+      <view class="empty-state" wx:if="{{!favorites.length}}">暂无收藏内容</view>
+    </block>
   </view>
 
-  <view class="footer-text">六堡茶 AI · 传承千年茶韵</view>
+  <view class="footer-text">茶侦探 · 用 AI 解锁茶文化</view>
 </view>

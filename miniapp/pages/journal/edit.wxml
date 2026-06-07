@@ -1,0 +1,84 @@
+<view class="page">
+  <view class="form card">
+    <!-- 茶名 -->
+    <view class="field">
+      <text class="label">茶名 *</text>
+      <input class="input" placeholder="如：三年陈六堡熟茶" value="{{form.tea_name}}" data-field="tea_name" bindinput="onInput" />
+    </view>
+
+    <!-- 茶类 -->
+    <view class="field">
+      <text class="label">茶类</text>
+      <scroll-view class="type-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+        <view class="type-list">
+          <view class="type-tag {{form.tea_type === item.key ? 'active' : ''}}" wx:for="{{teaTypes}}" wx:key="key" data-type="{{item.key}}" bindtap="selectType">{{item.name}}</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 产地 -->
+    <view class="field">
+      <text class="label">产地</text>
+      <input class="input" placeholder="如：广西梧州六堡镇" value="{{form.origin}}" data-field="origin" bindinput="onInput" />
+    </view>
+
+    <!-- 冲泡参数 -->
+    <view class="field-row">
+      <view class="field half">
+        <text class="label">🌡️ 水温(°C)</text>
+        <input class="input" type="number" value="{{form.brew_temp}}" data-field="brew_temp" bindinput="onInput" />
+      </view>
+      <view class="field half">
+        <text class="label">⏱️ 时间(s)</text>
+        <input class="input" type="number" value="{{form.brew_time}}" data-field="brew_time" bindinput="onInput" />
+      </view>
+      <view class="field half">
+        <text class="label">⚖️ 投茶(g)</text>
+        <input class="input" type="number" value="{{form.tea_amount}}" data-field="tea_amount" bindinput="onInput" />
+      </view>
+    </view>
+
+    <!-- 评分 -->
+    <view class="field">
+      <text class="label">香气 {{form.aroma_score}}分</text>
+      <slider min="1" max="5" step="1" value="{{form.aroma_score}}" activeColor="#2d5a27" data-field="aroma_score" bindchange="setScore" show-value />
+    </view>
+    <view class="field">
+      <text class="label">口感 {{form.taste_score}}分</text>
+      <slider min="1" max="5" step="1" value="{{form.taste_score}}" activeColor="#2d5a27" data-field="taste_score" bindchange="setScore" show-value />
+    </view>
+    <view class="field">
+      <text class="label">综合 {{form.overall_score}}分</text>
+      <slider min="1" max="5" step="1" value="{{form.overall_score}}" activeColor="#2d5a27" data-field="overall_score" bindchange="setScore" show-value />
+    </view>
+
+    <!-- 风味标签 -->
+    <view class="field">
+      <text class="label">风味标签（最多5个）</text>
+      <view class="flavor-list">
+        <view class="flavor-tag {{selectedFlavors.indexOf(item) >= 0 ? 'active' : ''}}" wx:for="{{flavors}}" wx:key="*this" data-flavor="{{item}}" bindtap="toggleFlavor">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 笔记 -->
+    <view class="field">
+      <text class="label">品茶笔记</text>
+      <textarea class="textarea" placeholder="记录你的品茶感受..." maxlength="2000" value="{{form.notes}}" data-field="notes" bindinput="onInput" />
+    </view>
+
+    <!-- 图片 -->
+    <view class="field">
+      <text class="label">拍照</text>
+      <view class="img-area" bindtap="chooseImage">
+        <image class="preview-img" wx:if="{{image}}" src="{{image}}" mode="aspectFill" />
+        <view class="img-placeholder" wx:else>
+          <text class="img-icon">📷</text>
+          <text class="img-text">点击添加照片</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <button class="btn-primary save-btn" bindtap="save" loading="{{saving}}">保存日记</button>
+</view>

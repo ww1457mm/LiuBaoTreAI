@@ -1,0 +1,77 @@
+<view class="page">
+  <!-- 输入表单 -->
+  <view class="form card" wx:if="{{!showResult}}">
+    <view class="form-header">
+      <text class="form-icon">🔍</text>
+      <text class="form-title">茶叶信息</text>
+    </view>
+
+    <view class="field">
+      <text class="label">茶名</text>
+      <input class="input" value="{{form.tea_name}}" data-field="tea_name" bindinput="onInput" />
+    </view>
+
+    <view class="field">
+      <text class="label">茶类</text>
+      <input class="input" value="{{form.tea_type}}" data-field="tea_type" bindinput="onInput" placeholder="如：熟茶、生茶、老茶婆" />
+    </view>
+
+    <view class="field">
+      <text class="label">年份：{{form.year}}年</text>
+      <slider min="0" max="30" step="1" value="{{form.year}}" activeColor="#2d5a27" bindchange="setYear" show-value />
+    </view>
+
+    <view class="field">
+      <text class="label">存储条件</text>
+      <view class="tag-list">
+        <view class="tag {{form.storage === item ? 'active' : ''}}" wx:for="{{storageOptions}}" wx:key="*this" data-val="{{item}}" bindtap="selectStorage">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">外观描述（选填）</text>
+      <textarea class="textarea" placeholder="如：条索紧结，色泽黑褐，有金花..." value="{{form.appearance}}" data-field="appearance" bindinput="onInput" />
+    </view>
+
+    <view class="field">
+      <text class="label">产地（选填）</text>
+      <input class="input" placeholder="如：广西梧州六堡镇" value="{{form.origin}}" data-field="origin" bindinput="onInput" />
+    </view>
+
+    <button class="btn-primary submit-btn" bindtap="submit" loading="{{loading}}">AI 评估</button>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result" wx:if="{{showResult && result}}">
+    <view class="result-header card">
+      <view class="score-circle">
+        <text class="score-num">{{result.quality_score || '?'}}</text>
+        <text class="score-label">品质分</text>
+      </view>
+      <view class="score-info">
+        <text class="score-level">{{result.quality_level || '待评估'}}</text>
+        <view class="price-range" wx:if="{{result.price_min}}">
+          <text class="price-label">参考价</text>
+          <text class="price-value">¥{{result.price_min}} - ¥{{result.price_max}} /斤</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-card card" wx:if="{{result.analysis}}">
+      <text class="detail-label">📊 品质分析</text>
+      <text class="detail-text">{{result.analysis}}</text>
+    </view>
+
+    <view class="detail-card card" wx:if="{{result.storage_advice}}">
+      <text class="detail-label">🏠 存储建议</text>
+      <text class="detail-text">{{result.storage_advice}}</text>
+    </view>
+
+    <view class="detail-card card" wx:if="{{result.brew_advice}}">
+      <text class="detail-label">☕ 冲泡建议</text>
+      <text class="detail-text">{{result.brew_advice}}</text>
+    </view>
+
+    <button class="btn-secondary reset-btn" bindtap="reset">重新评估</button>
+  </view>
+</view>

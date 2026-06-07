@@ -2,61 +2,76 @@
   <!-- 聊天区域 -->
   <scroll-view class="chat-list" scroll-y scroll-into-view="{{scrollId}}" scroll-with-animation enhanced show-scrollbar="{{false}}">
     <!-- 欢迎消息 -->
-    <view class="welcome-card" wx:if="{{messages.length===0}}">
-      <view class="bot-avatar">🍵</view>
-      <view class="welcome-content">
-        <text class="welcome-title">六堡茶智能助手</text>
-        <text class="welcome-text">您好！可咨询历史文化、工艺、冲泡、存储与功效等茶文化问题。</text>
+    <view class="welcome" wx:if="{{messages.length===0}}">
+      <view class="welcome-icon">🍵</view>
+      <text class="welcome-title">茶侦探 AI 助手</text>
+      <text class="welcome-text">你好！我是六堡茶 AI 助手，可以回答关于六堡茶的历史文化、制作工艺、冲泡方法、存储收藏等问题。</text>
+      <view class="welcome-tags">
+        <text class="wtag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">{{item}}</text>
       </view>
     </view>
 
     <!-- 消息列表 -->
     <block wx:for="{{messages}}" wx:key="id">
       <view class="msg-row {{item.role}}" id="msg-{{item.id}}">
-        <view class="avatar" wx:if="{{item.role!=='user'}}">🍵</view>
+        <view class="avatar" wx:if="{{item.role!=='user'}}">
+          <text class="avatar-emoji">🍵</text>
+        </view>
         <view class="msg-body">
-          <text class="bubble">{{item.content}}</text>
+          <view class="bubble {{item.role}}">
+            <text class="bubble-text">{{item.content}}</text>
+          </view>
           <!-- 参考来源 -->
           <view class="refs" wx:if="{{item.references && item.references.length}}">
-            <text class="refs-title">📖 参考来源</text>
-            <view class="ref-item" wx:for="{{item.references}}" wx:for-item="ref" wx:key="source">
-              <text>{{ref.title}} · {{ref.source}}</text>
+            <view class="refs-header">
+              <text class="refs-icon">📖</text>
+              <text class="refs-title">参考来源</text>
             </view>
-            <view class="recommend" wx:if="{{item.recommendations}}">
-              <text>推荐：{{item.recommendations}}</text>
+            <view class="ref-item" wx:for="{{item.references}}" wx:for-item="ref" wx:key="source">
+              <text class="ref-text">{{ref.title}}</text>
+              <text class="ref-source">{{ref.source}}</text>
             </view>
           </view>
+          <view class="recommend" wx:if="{{item.recommendations}}">
+            <text class="recommend-label">💡 推荐阅读：</text>
+            <text class="recommend-text">{{item.recommendations}}</text>
+          </view>
         </view>
-        <view class="avatar user-avatar" wx:if="{{item.role==='user'}}">我</view>
+        <view class="avatar user-avatar" wx:if="{{item.role==='user'}}">
+          <text class="avatar-emoji">👤</text>
+        </view>
       </view>
     </block>
 
     <!-- 加载中 -->
-    <view class="msg-row assistant" wx:if="{{sending}}">
-      <view class="avatar">🍵</view>
+    <view class="msg-row assistant" wx:if="{{sending}}" id="typing">
+      <view class="avatar">
+        <text class="avatar-emoji">🍵</text>
+      </view>
       <view class="typing-bubble">
-        <view class="dot"></view>
-        <view class="dot"></view>
-        <view class="dot"></view>
+        <view class="typing-dot"></view>
+        <view class="typing-dot"></view>
+        <view class="typing-dot"></view>
       </view>
     </view>
   </scroll-view>
 
   <!-- 快捷问题 -->
-  <scroll-view class="quick-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+  <scroll-view class="quick-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{messages.length > 0}}">
     <view class="quick-questions">
-      <text class="quick-tag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">{{item}}</text>
+      <view class="quick-tag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">
+        <text>{{item}}</text>
+      </view>
     </view>
   </scroll-view>
 
   <!-- 输入栏 -->
   <view class="input-bar">
     <view class="input-wrap">
-      <input class="input" placeholder="请输入您的问题..." value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
+      <input class="input" placeholder="输入你的问题..." placeholder-class="input-placeholder" value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
     </view>
-    <button class="send-btn {{input ? 'active' : ''}}" bindtap="send" disabled="{{sending}}">
-      <text wx:if="{{!sending}}">发送</text>
-      <text wx:else>...</text>
-    </button>
+    <view class="send-btn {{input ? 'active' : ''}}" bindtap="send">
+      <text class="send-icon">↑</text>
+    </view>
   </view>
 </view>

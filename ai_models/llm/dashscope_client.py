@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import List, Optional
 
 from ai_models.llm.qwen_config import (
@@ -9,6 +10,9 @@ from ai_models.llm.qwen_config import (
     QWEN_MODEL,
     SYSTEM_PROMPT,
 )
+
+MAX_RETRIES = 3
+INITIAL_DELAY = 1.0
 
 
 def chat_completion(
@@ -29,19 +33,34 @@ def chat_completion(
     if not DASHSCOPE_API_KEY:
         return _fallback_answer(question, context)
 
-    try:
-        from openai import OpenAI
+    last_error: Optional[Exception] = None
+    for attempt in range(MAX_RETRIES):
+        try:
+            from openai import OpenAI
 
-        client = OpenAI(api_key=DASHSCOPE_API_KEY, base_url=DASHSCOPE_BASE_URL)
-        resp = client.chat.completions.create(
-            model=QWEN_MODEL,
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1500,
-        )
-        return resp.choices[0].message.content or _fallback_answer(question, context)
-    except Exception:
-        return _fallback_answer(question, context)
+            client = OpenAI(
+                api_key=DASHSCOPE_API_KEY,
+                base_url=DASHSCOPE_BASE_URL,
+                timeout=30.0,
+            )
+            resp = client.chat.completions.create(
+                model=QWEN_MODEL,
+                messages=messages,
+                temperature=0.7,
+                max_tokens=1500,
+            )
+            content = resp.choices[0].message.content
+            if content:
+                return content
+            last_error = ValueError("Empty response from LLM")
+        except Exception as exc:
+            last_error = exc
+            if attempt < MAX_RETRIES - 1:
+                delay = INITIAL_DELAY * (2 ** attempt)
+                time.sleep(delay)
+                continue
+
+    return _fallback_answer(question, context)
 
 
 def _fallback_answer(question: str, context: Optional[str] = None) -> str:

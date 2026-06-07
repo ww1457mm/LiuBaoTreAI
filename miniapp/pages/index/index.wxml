@@ -1,62 +1,165 @@
 <view class="page">
-  <!-- 轮播横幅 -->
-  <swiper class="banner" indicator-dots indicator-color="rgba(255,255,255,0.4)" indicator-active-color="#fff" autoplay circular interval="4500" duration="600">
-    <swiper-item wx:for="{{banners}}" wx:key="id">
-      <view class="banner-item" style="background: {{item.bg}}">
-        <view class="banner-deco"></view>
-        <view class="banner-content">
-          <text class="banner-tag">{{item.tag}}</text>
-          <text class="banner-title">{{item.title}}</text>
-          <text class="banner-desc">{{item.desc}}</text>
+  <!-- ========== 沉浸式 Hero ========== -->
+  <view class="hero">
+    <view class="hero-bg"></view>
+    <view class="hero-noise"></view>
+
+    <view class="hero-inner">
+      <view class="hero-badge">
+        <view class="badge-dot"></view>
+        <text>茶侦探 · 每日更新</text>
+      </view>
+
+      <text class="hero-headline">你喝的六堡茶<br/>真的懂吗？</text>
+
+      <text class="hero-sub">用 AI 解锁 1500 年茶文化密码</text>
+
+      <view class="hero-cta" bindtap="goChat">
+        <text class="cta-text">开始探索</text>
+        <text class="cta-arrow">→</text>
+      </view>
+    </view>
+
+    <!-- 装饰 -->
+    <view class="hero-deco-ring r1"></view>
+    <view class="hero-deco-ring r2"></view>
+  </view>
+
+  <!-- ========== 今日茶识 ========== -->
+  <view class="section">
+    <view class="section-head">
+      <text class="section-label">🍃 今日茶识</text>
+      <text class="section-more" bindtap="goKnowledge">更多 ›</text>
+    </view>
+
+    <scroll-view class="fact-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="fact-list">
+        <view class="fact-card" wx:for="{{teaFacts}}" wx:key="id">
+          <view class="fact-bg" style="background: {{item.bg}}"></view>
+          <view class="fact-content">
+            <text class="fact-tag">{{item.tag}}</text>
+            <text class="fact-title">{{item.title}}</text>
+            <text class="fact-text">{{item.text}}</text>
+          </view>
         </view>
       </view>
-    </swiper-item>
-  </swiper>
+    </scroll-view>
+  </view>
 
-  <!-- 简介卡片 -->
-  <view class="intro card">
-    <view class="intro-header">
-      <view class="intro-icon">🍃</view>
-      <text class="intro-title">六堡茶简介</text>
+  <!-- ========== 常用工具 ========== -->
+  <view class="section">
+    <view class="section-head">
+      <text class="section-label">🧰 常用工具</text>
     </view>
-    <text class="intro-text">六堡茶产于广西梧州，是中国黑茶代表，以「红、浓、陈、醇」及独特槟榔香著称，拥有1500余年历史。</text>
-    <view class="intro-tags">
-      <text class="tag">黑茶</text>
-      <text class="tag">梧州</text>
-      <text class="tag">非遗文化</text>
+
+    <scroll-view class="tool-scroll" scroll-x enhanced show-scrollbar="{{false}}">
+      <view class="tool-list">
+        <view class="tool-item" bindtap="goBrew">
+          <view class="tool-icon bg1">
+            <view class="tool-ring"></view>
+            <view class="tool-hand"></view>
+          </view>
+          <text class="tool-name">冲泡计时</text>
+        </view>
+        <view class="tool-item" bindtap="goJournal">
+          <view class="tool-icon bg2">
+            <view class="tool-book"></view>
+          </view>
+          <text class="tool-name">品茶日记</text>
+        </view>
+        <view class="tool-item" bindtap="goQuiz">
+          <view class="tool-icon bg3">
+            <view class="tool-star"></view>
+          </view>
+          <text class="tool-name">答题闯关</text>
+        </view>
+        <view class="tool-item" bindtap="goValuation">
+          <view class="tool-icon bg4">
+            <view class="tool-lens"></view>
+          </view>
+          <text class="tool-name">AI 估价</text>
+        </view>
+        <view class="tool-item" bindtap="goRecommend">
+          <view class="tool-icon bg5">
+            <view class="tool-bullseye"></view>
+          </view>
+          <text class="tool-name">AI 推荐</text>
+        </view>
+        <view class="tool-item" bindtap="goProcess">
+          <view class="tool-icon bg6">
+            <view class="tool-steps">
+              <view class="step-dot"></view>
+              <view class="step-dot"></view>
+              <view class="step-dot"></view>
+            </view>
+          </view>
+          <text class="tool-name">加工工艺</text>
+        </view>
+        <view class="tool-item" bindtap="goKnowledge">
+          <view class="tool-icon bg7">
+            <view class="tool-book open"></view>
+          </view>
+          <text class="tool-name">知识库</text>
+        </view>
+        <view class="tool-item" bindtap="goHistory">
+          <view class="tool-icon bg8">
+            <view class="tool-clock"></view>
+          </view>
+          <text class="tool-name">历史记录</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- ========== 快速提问 ========== -->
+  <view class="section">
+    <view class="section-head">
+      <text class="section-label">💬 问问茶侦探</text>
+    </view>
+
+    <view class="ask-list">
+      <view class="ask-card" wx:for="{{questions}}" wx:key="id" data-q="{{item.q}}" bindtap="goQuickQuestion">
+        <view class="ask-num">{{index + 1}}</view>
+        <view class="ask-body">
+          <text class="ask-q">{{item.q}}</text>
+          <text class="ask-hint">{{item.hint}}</text>
+        </view>
+        <text class="ask-go">→</text>
+      </view>
     </view>
   </view>
 
-  <!-- 功能入口 -->
-  <view class="section-title">核心功能</view>
-  <view class="menu-grid">
-    <view class="menu-item" bindtap="goIdentify">
-      <view class="menu-icon-wrap icon-green">
-        <text class="menu-icon">📷</text>
-      </view>
-      <text class="menu-label">AI识别</text>
-      <text class="menu-desc">品种·等级·病害</text>
+  <!-- ========== 季节推荐 ========== -->
+  <view class="section">
+    <view class="section-head">
+      <text class="section-label">🌿 时令茶话</text>
     </view>
-    <view class="menu-item" bindtap="goChat">
-      <view class="menu-icon-wrap icon-teal">
-        <text class="menu-icon">💬</text>
+
+    <view class="season-card">
+      <view class="season-bg"></view>
+      <view class="season-content">
+        <view class="season-tag">{{season.name}}</view>
+        <text class="season-title">{{season.title}}</text>
+        <text class="season-text">{{season.text}}</text>
+        <view class="season-tea">
+          <text class="season-tea-label">推荐：</text>
+          <text class="season-tea-name">{{season.recommend}}</text>
+        </view>
       </view>
-      <text class="menu-label">智能问答</text>
-      <text class="menu-desc">知识库增强</text>
     </view>
-    <view class="menu-item" bindtap="goKnowledge">
-      <view class="menu-icon-wrap icon-gold">
-        <text class="menu-icon">📚</text>
-      </view>
-      <text class="menu-label">知识库</text>
-      <text class="menu-desc">茶文化百科</text>
+  </view>
+
+  <!-- ========== 茶语 ========== -->
+  <view class="quote-section">
+    <view class="quote-card">
+      <text class="quote-mark">"</text>
+      <text class="quote-text">{{quote.text}}</text>
+      <text class="quote-author">—— {{quote.author}}</text>
     </view>
-    <view class="menu-item" bindtap="goHistory">
-      <view class="menu-icon-wrap icon-brown">
-        <text class="menu-icon">📋</text>
-      </view>
-      <text class="menu-label">历史记录</text>
-      <text class="menu-desc">识别与问答</text>
-    </view>
+  </view>
+
+  <!-- 底部 -->
+  <view class="footer">
+    <text class="footer-text">茶侦探 · 用一杯茶的时间读懂世界</text>
   </view>
 </view>

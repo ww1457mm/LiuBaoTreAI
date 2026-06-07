@@ -56,3 +56,5 @@
   height: 88rpx;
   line-height: 88rpx;
 }
+
+/* 加载状态 — 使用全局 .loading-wrap / .loading-spinner */

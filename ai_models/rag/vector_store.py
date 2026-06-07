@@ -20,13 +20,21 @@ class VectorStore:
     def __init__(self):
         self.index = None
         self.chunks: List[dict] = []
+        self._index_loaded = False
         INDEX_DIR.mkdir(parents=True, exist_ok=True)
 
     def build_if_needed(self) -> None:
-        if INDEX_PATH.exists() and META_PATH.exists():
-            self._load()
+        if self._index_loaded:
             return
+        if INDEX_PATH.exists() and META_PATH.exists():
+            try:
+                self._load()
+                self._index_loaded = True
+                return
+            except Exception:
+                pass
         self._build_from_knowledge_base()
+        self._index_loaded = True
 
     def _build_from_knowledge_base(self) -> None:
         chunks = []
@@ -46,8 +54,11 @@ class VectorStore:
         if not chunks:
             return
         texts = [f"{c['title']}\n{c['content']}" for c in chunks]
-        vectors = embed_texts(texts)
-        self._save_index(vectors, chunks)
+        try:
+            vectors = embed_texts(texts)
+            self._save_index(vectors, chunks)
+        except Exception:
+            self.chunks = chunks
 
     def _save_index(self, vectors: np.ndarray, chunks: List[dict]) -> None:
         import faiss
@@ -71,9 +82,11 @@ class VectorStore:
         self.build_if_needed()
         if not self.chunks or self.index is None:
             return []
+        try:
+            import faiss
+        except Exception:
+            return []
         q = embed_texts([query])
-        import faiss
-
         faiss.normalize_L2(q)
         scores, indices = self.index.search(q, min(top_k, len(self.chunks)))
         results = []
