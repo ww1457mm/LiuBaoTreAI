@@ -1,46 +1,104 @@
-# ===== 密钥 / 本地配置（最重要）=====
-.env
-backend/.env
-*.env
-!*.env.example
+# ============================================================
+# 六堡茶智能服务平台 — GitHub 上传忽略规则
+# ============================================================
 
-# ===== Python 虚拟环境 =====
-backend/.base/
-.base/
-.venv/
-venv/
-backend/.venv/
-liubao/
+# ----- 密钥 / 本地配置（切勿提交）-----
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+*.pem
+*.key
+*.p12
+
+# ----- Python -----
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
 *.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+pip-wheel-metadata/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
 
-# ===== Node.js =====
+# 虚拟环境
+.venv/
+venv/
+env/
+ENV/
+.base/
+backend/.base/
+backend/.venv/
+liubao/
+
+# ----- Node.js（小程序 npm 构建时）-----
 node_modules/
+miniprogram_npm/
 package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# ===== 本地数据库 / 运行时数据 =====
+# ----- 本地数据库 / 运行时数据 -----
+*.db
+*.sqlite
+*.sqlite3
 backend/liubao_tea.db
 backend/uploads/
-*.db
 logs/
+*.log
 
-# ===== AI 模型 / 生成文件（体积大，可本地重建）=====
+# ----- AI 模型 / 训练产物（体积大，本地重建）-----
 ai_models/yolo/best.pt
 ai_models/yolo/runs/
 ai_models/rag/index/
 *.pt
+*.pth
 *.onnx
+*.weights
+*.h5
+*.pkl
+*.joblib
 liubao5/
+wandb/
+runs/
 
-# ===== 微信小程序私有配置 =====
+# Hugging Face / 模型缓存
+.cache/
+huggingface/
+
+# ----- 微信小程序私有配置 -----
 miniapp/project.private.config.json
 project.private.config.json
+.wechat_devtools/
 
-# ===== 编辑器 / 系统垃圾文件 =====
+# 本地 API 地址覆盖（若从 config.example.js 拆分）
+miniapp/utils/config.local.js
+
+# ----- 编辑器 / IDE / 系统文件 -----
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ----- Cursor / 本地工具 -----
+.cursor/
