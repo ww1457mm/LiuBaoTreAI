@@ -1,4 +1,3 @@
-import os
 import sys
 from pathlib import Path
 
@@ -17,7 +16,6 @@ except ImportError:
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
@@ -52,7 +50,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="六堡茶智能服务平台",
-    description="六堡茶品种识别、问答助手与知识库查询 API",
+    description="六堡茶病虫害检测、问答助手与知识库查询 API",
     version="1.0.0",
     lifespan=lifespan,
 )

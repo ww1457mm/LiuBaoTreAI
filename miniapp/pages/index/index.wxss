@@ -10,11 +10,11 @@
 
 .hero {
   position: relative;
-  padding: 100rpx 36rpx 60rpx;
+  padding: 28rpx 36rpx 44rpx;
   overflow: hidden;
-  min-height: 480rpx;
+  min-height: 320rpx;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .hero-bg {
@@ -71,7 +71,7 @@
   gap: 10rpx;
   font-size: 22rpx;
   color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 28rpx;
+  margin-bottom: 20rpx;
   letter-spacing: 2rpx;
 }
 
@@ -90,12 +90,12 @@
 
 .hero-headline {
   display: block;
-  font-size: 60rpx;
+  font-size: 52rpx;
   font-weight: 900;
   color: #fff;
-  line-height: 1.15;
-  letter-spacing: 4rpx;
-  margin-bottom: 20rpx;
+  line-height: 1.2;
+  letter-spacing: 3rpx;
+  margin-bottom: 16rpx;
 }
 
 .hero-sub {
@@ -103,7 +103,7 @@
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.5);
   letter-spacing: 2rpx;
-  margin-bottom: 40rpx;
+  margin-bottom: 28rpx;
 }
 
 .hero-cta {
@@ -251,26 +251,27 @@
 }
 
 /* ============================================================
-   常用工具 — 横向滚动
+   常用工具 — 网格布局
    ============================================================ */
 
-.tool-scroll {
-  margin: 0 -24rpx;
-  white-space: nowrap;
-}
-
-.tool-list {
-  display: inline-flex;
-  padding: 8rpx 24rpx 16rpx;
-  gap: 24rpx;
+.tool-grid {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 32rpx;
+  padding: 8rpx 12rpx 16rpx;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+  border: 1rpx solid var(--color-border);
 }
 
 .tool-item {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
-  width: 112rpx;
+  width: 25%;
+  box-sizing: border-box;
   flex-shrink: 0;
   transition: transform 0.2s var(--ease-bounce);
 }

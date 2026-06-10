@@ -40,6 +40,9 @@ Page({
           if (d.image_url && !d.image_url.startsWith('http')) {
             d.full_image_url = BASE_URL + d.image_url
           }
+          const conf = Number(d.confidence) || 0
+          d.confidenceText = (conf * 100).toFixed(1) + '%'
+          d.confidencePercent = Math.round(conf * 100)
           this.setData({ result: d })
         } else {
           wx.showToast({ title: res.message || '识别失败', icon: 'none' })

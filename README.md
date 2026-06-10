@@ -15,10 +15,8 @@
 ### 1. 后端
 
 ```bash
-cd backend
 pip install -r requirements.txt
-copy .env.example .env   # 按需填写 API Key
-cd ..
+copy backend\.env.example backend\.env   # 按需填写 API Key
 python run.py
 ```
 
@@ -29,8 +27,8 @@ USE_SQLITE=false
 DATABASE_URL=mysql+pymysql://root:password@127.0.0.1:3306/liubao_tea?charset=utf8mb4
 ```
 
-API 文档：http://127.0.0.1:8000/docs
-健康检查：http://127.0.0.1:8000/health
+API 文档：http://127.0.0.1:8001/docs
+健康检查：http://127.0.0.1:8001/health
 
 ### 2. 微信小程序
 
@@ -83,7 +81,6 @@ LiuBaoTreAI/
 │   ├── brew/             # 冲泡存储
 │   ├── grade/            # 等级品鉴
 │   └── origin/           # 产地分布
-└── train/                  # YOLO 训练脚本
 ```
 
 ## 主要 API

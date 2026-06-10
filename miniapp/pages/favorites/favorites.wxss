@@ -1,0 +1,52 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.fav-item {
+  margin-bottom: 16rpx;
+}
+
+.fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.fav-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  flex: 1;
+  margin-right: 12rpx;
+}
+
+.fav-type {
+  font-size: 22rpx;
+  color: var(--color-primary);
+  background: #eef5ec;
+  padding: 4rpx 14rpx;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.fav-content {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+
+.fav-remove {
+  background: #fff;
+  color: var(--color-text-muted);
+  border: 1rpx solid #e0e0e0;
+  font-size: 24rpx;
+}
+
+.fav-remove::after { border: none; }

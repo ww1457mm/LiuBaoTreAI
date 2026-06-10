@@ -9,13 +9,6 @@ def list_regions(db: Session) -> List[dict]:
     return [_region_to_dict(r) for r in regions]
 
 
-def get_region_by_id(db: Session, rid: int) -> dict | None:
-    region = db.query(Region).filter(Region.id == rid).first()
-    if not region:
-        return None
-    return _region_to_dict(region)
-
-
 def _region_to_dict(r: Region) -> dict:
     return {
         "id": r.id,

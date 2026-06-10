@@ -79,19 +79,6 @@ def list_journals(
     }
 
 
-@router.get("/journal/{jid}")
-def get_journal(jid: int, openid: str = Query(...), db: Session = Depends(get_db)):
-    openid = sanitize_openid(openid) or openid
-    user = db.query(User).filter(User.openid == openid).first()
-    if not user:
-        return {"code": 401, "message": "请先登录"}
-
-    entry = db.query(TeaJournal).filter(TeaJournal.id == jid, TeaJournal.user_id == user.id).first()
-    if not entry:
-        return {"code": 404, "message": "日记不存在"}
-    return {"code": 0, "data": _to_dict(entry)}
-
-
 @router.delete("/journal/{jid}")
 def delete_journal(jid: int, openid: str = Query(...), db: Session = Depends(get_db)):
     openid = sanitize_openid(openid) or openid

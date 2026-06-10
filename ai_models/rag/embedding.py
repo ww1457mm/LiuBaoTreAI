@@ -12,13 +12,19 @@ SILICONFLOW_EMBED_URL = os.getenv(
     "https://api.siliconflow.cn/v1/embeddings",
 )
 EMBED_MODEL = os.getenv("EMBED_MODEL", "BAAI/bge-large-zh-v1.5")
+# bge-large-zh-v1.5 输出 1024 维；本地伪向量须保持一致，避免与 FAISS 索引维度冲突
+EMBED_DIM = int(os.getenv("EMBED_DIM", "1024"))
 _EMBED_CACHE: dict[str, np.ndarray] = {}
 _MAX_RETRIES = 2
 
 
+def embed_dim() -> int:
+    return EMBED_DIM
+
+
 def embed_texts(texts: List[str]) -> np.ndarray:
     if not texts:
-        return np.zeros((0, 768), dtype=np.float32)
+        return np.zeros((0, EMBED_DIM), dtype=np.float32)
 
     uncached = [t for t in texts if t not in _EMBED_CACHE]
     if uncached:
@@ -53,7 +59,7 @@ def _request_embeddings(texts: List[str]) -> List[np.ndarray]:
     return [_local_hash_embedding(t) for t in texts]
 
 
-def _local_hash_embedding(text: str, dim: int = 768) -> np.ndarray:
+def _local_hash_embedding(text: str, dim: int = EMBED_DIM) -> np.ndarray:
     """无 API 时的确定性伪向量，保证 FAISS 可运行。"""
     rng = np.random.default_rng(abs(hash(text)) % (2**32))
     vec = rng.standard_normal(dim).astype(np.float32)

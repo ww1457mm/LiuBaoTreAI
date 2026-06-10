@@ -109,12 +109,3 @@ def get_process():
             "stages": PROCESS_STAGES,
         },
     }
-
-
-@router.get("/process/{stage_id}")
-def get_stage_detail(stage_id: int):
-    """获取单个工艺步骤详情"""
-    stage = next((s for s in PROCESS_STAGES if s["id"] == stage_id), None)
-    if not stage:
-        return {"code": 404, "message": "工艺步骤不存在"}
-    return {"code": 0, "data": stage}

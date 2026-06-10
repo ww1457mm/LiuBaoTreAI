@@ -1,8 +1,8 @@
 <view class="page">
   <!-- 顶部标题 -->
   <view class="page-hero">
-    <text class="hero-title">📷 AI 智能识别</text>
-    <text class="hero-desc">拍照即可识别茶叶品种、等级与病害</text>
+    <text class="hero-title">🔬 AI 病虫害检测</text>
+    <text class="hero-desc">拍照识别茶叶病害与虫害，获取处理建议</text>
   </view>
 
   <!-- 图片预览区 -->
@@ -41,19 +41,19 @@
     <view class="result-card">
       <!-- 结果头部 -->
       <view class="result-header">
-        <view class="result-status {{result.category.indexOf('正常') >= 0 ? 'status-ok' : 'status-warn'}}">
-          <text class="status-icon">{{result.category.indexOf('正常') >= 0 ? '✅' : '⚠️'}}</text>
+        <view class="result-status {{result.category.indexOf('未检出') >= 0 || result.category.indexOf('正常') >= 0 ? 'status-ok' : 'status-warn'}}">
+          <text class="status-icon">{{result.category.indexOf('未检出') >= 0 || result.category.indexOf('正常') >= 0 ? '✅' : '⚠️'}}</text>
           <text class="status-text">{{result.category}}</text>
         </view>
         <view class="confidence-bar">
           <text class="confidence-label">置信度</text>
-          <text class="confidence-value">{{result.confidence}}</text>
+          <text class="confidence-value">{{result.confidenceText || result.confidence}}</text>
         </view>
       </view>
 
       <!-- 置信度进度条 -->
       <view class="progress-track">
-        <view class="progress-fill {{result.category.indexOf('正常') >= 0 ? 'fill-ok' : 'fill-warn'}}" style="width: {{result.confidence}}"></view>
+        <view class="progress-fill {{result.category.indexOf('未检出') >= 0 || result.category.indexOf('正常') >= 0 ? 'fill-ok' : 'fill-warn'}}" style="width: {{result.confidencePercent || 0}}%"></view>
       </view>
 
       <!-- 描述 -->

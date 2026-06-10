@@ -6,13 +6,7 @@ Page({
   data: {
     userInfo: { nickname: '茶友', avatar: '' },
     defaultAvatar,
-    favorites: [],
-    showFav: false,
-    favLoading: false,
-    stats: { recognition: 0, qa: 0, favorite: 0 },
-    statsLoading: false,
-    recognitionStats: { total: 0, normal_count: 0, abnormal_count: 0, monthly: [] },
-    barMaxCount: 1
+    stats: { recognition: 0, qa: 0, favorite: 0 }
   },
 
   onShow() {
@@ -52,14 +46,12 @@ Page({
   loadStats() {
     const openid = getApp().globalData.openid || wx.getStorageSync('openid')
     if (!openid) return
-    this.setData({ statsLoading: true })
 
-    // 并行请求：历史记录 + 收藏 + 识别统计
+    // 并行请求：历史记录 + 收藏
     Promise.all([
       request({ url: '/api/history', data: { openid, type: 'all', page: 1, page_size: 1 } }).catch(() => null),
-      request({ url: '/api/favorite', data: { openid, page: 1, page_size: 1 } }).catch(() => null),
-      request({ url: '/api/stats/recognition', data: { openid } }).catch(() => null)
-    ]).then(([historyRes, favRes, statsRes]) => {
+      request({ url: '/api/favorite', data: { openid, page: 1, page_size: 1 } }).catch(() => null)
+    ]).then(([historyRes, favRes]) => {
       const stats = { recognition: 0, qa: 0, favorite: 0 }
 
       // 解析历史记录数量
@@ -75,17 +67,8 @@ Page({
         stats.favorite = favRes.total || 0
       }
 
-      // 解析识别统计
-      let recognitionStats = { total: 0, normal_count: 0, abnormal_count: 0, monthly: [] }
-      if (statsRes && statsRes.code === 0 && statsRes.data) {
-        recognitionStats = statsRes.data
-      }
-      const barMaxCount = Math.max(...(recognitionStats.monthly || []).map(m => m.count), 1)
-
-      this.setData({ stats, recognitionStats, barMaxCount, statsLoading: false })
-    }).catch(() => {
-      this.setData({ statsLoading: false })
-    })
+      this.setData({ stats })
+    }).catch(() => {})
   },
 
   onChooseAvatar(e) {
@@ -116,63 +99,11 @@ Page({
     wx.navigateTo({ url: '/pages/history/history' })
   },
 
-  goStats() {
-    wx.navigateTo({ url: '/pages/stats/stats' })
-  },
-
   goKnowledge() {
     wx.navigateTo({ url: '/pages/knowledge/knowledge' })
   },
 
-  goJournal() {
-    wx.navigateTo({ url: '/pages/journal/journal' })
-  },
-
   goFavorites() {
-    const openid = getApp().globalData.openid || wx.getStorageSync('openid')
-    if (!openid) return
-    this.setData({ showFav: true, favLoading: true })
-    request({ url: '/api/favorite', data: { openid, page: 1, page_size: 100 } })
-      .then((res) => {
-        if (res.code === 0) {
-          this.setData({ favorites: res.data || [], favLoading: false })
-        }
-      })
-      .catch(() => {
-        this.setData({ favLoading: false })
-        wx.showToast({ title: '加载失败', icon: 'none' })
-      })
-  },
-
-  closeFavorites() {
-    this.setData({ showFav: false })
-    this.loadStats()
-  },
-
-  removeFav(e) {
-    const id = e.currentTarget.dataset.id
-    const openid = getApp().globalData.openid || wx.getStorageSync('openid')
-
-    wx.showModal({
-      title: '提示',
-      content: '确定取消收藏吗？',
-      success: (res) => {
-        if (!res.confirm) return
-        request({
-          url: '/api/favorite/' + id,
-          method: 'DELETE',
-          data: { openid }
-        }).then(() => {
-          const favorites = this.data.favorites.filter((f) => f.id !== id)
-          this.setData({
-            favorites,
-            'stats.favorite': Math.max(0, this.data.stats.favorite - 1)
-          })
-          wx.showToast({ title: '已取消收藏' })
-        }).catch(() => {
-          wx.showToast({ title: '删除失败', icon: 'none' })
-        })
-      }
-    })
+    wx.navigateTo({ url: '/pages/favorites/favorites' })
   }
 })

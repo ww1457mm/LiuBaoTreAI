@@ -34,7 +34,7 @@
 
     <scroll-view class="fact-scroll" scroll-x enhanced show-scrollbar="{{false}}">
       <view class="fact-list">
-        <view class="fact-card" wx:for="{{teaFacts}}" wx:key="id">
+        <view class="fact-card" wx:for="{{teaFacts}}" wx:key="id" bindtap="goFactDetail" data-item="{{item}}">
           <view class="fact-bg" style="background: {{item.bg}}"></view>
           <view class="fact-content">
             <text class="fact-tag">{{item.tag}}</text>
@@ -52,9 +52,8 @@
       <text class="section-label">🧰 常用工具</text>
     </view>
 
-    <scroll-view class="tool-scroll" scroll-x enhanced show-scrollbar="{{false}}">
-      <view class="tool-list">
-        <view class="tool-item" bindtap="goBrew">
+    <view class="tool-grid">
+      <view class="tool-item" bindtap="goBrew">
           <view class="tool-icon bg1">
             <view class="tool-ring"></view>
             <view class="tool-hand"></view>
@@ -107,8 +106,7 @@
           </view>
           <text class="tool-name">历史记录</text>
         </view>
-      </view>
-    </scroll-view>
+    </view>
   </view>
 
   <!-- ========== 快速提问 ========== -->
@@ -146,15 +144,6 @@
           <text class="season-tea-name">{{season.recommend}}</text>
         </view>
       </view>
-    </view>
-  </view>
-
-  <!-- ========== 茶语 ========== -->
-  <view class="quote-section">
-    <view class="quote-card">
-      <text class="quote-mark">"</text>
-      <text class="quote-text">{{quote.text}}</text>
-      <text class="quote-author">—— {{quote.author}}</text>
     </view>
   </view>
 

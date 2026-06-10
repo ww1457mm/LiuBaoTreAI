@@ -8,7 +8,7 @@
     "pages/knowledge/knowledge",
     "pages/knowledge/detail",
     "pages/history/history",
-    "pages/stats/stats",
+    "pages/favorites/favorites",
     "pages/process/process",
     "pages/brew/brew",
     "pages/journal/journal",
@@ -38,7 +38,7 @@
       },
       {
         "pagePath": "pages/identify/identify",
-        "text": "识别",
+        "text": "检测",
         "iconPath": "images/tab-scan.png",
         "selectedIconPath": "images/tab-scan-active.png"
       },

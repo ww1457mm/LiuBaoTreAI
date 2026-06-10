@@ -29,10 +29,12 @@ class VectorStore:
         if INDEX_PATH.exists() and META_PATH.exists():
             try:
                 self._load()
-                self._index_loaded = True
-                return
+                if self._index_matches_embeddings():
+                    self._index_loaded = True
+                    return
             except Exception:
                 pass
+            self._remove_index_files()
         self._build_from_knowledge_base()
         self._index_loaded = True
 
@@ -78,6 +80,28 @@ class VectorStore:
         self.index = faiss.read_index(str(INDEX_PATH))
         self.chunks = json.loads(META_PATH.read_text(encoding="utf-8"))
 
+    def _index_matches_embeddings(self) -> bool:
+        if self.index is None or not self.chunks:
+            return False
+        probe = embed_texts(["__dim_check__"])
+        return probe.shape[1] == self.index.d
+
+    def _remove_index_files(self) -> None:
+        self.index = None
+        self.chunks = []
+        for path in (INDEX_PATH, META_PATH):
+            try:
+                path.unlink(missing_ok=True)
+            except TypeError:
+                if path.exists():
+                    path.unlink()
+
+    def _rebuild_index(self) -> None:
+        self._index_loaded = False
+        self._remove_index_files()
+        self._build_from_knowledge_base()
+        self._index_loaded = True
+
     def search(self, query: str, top_k: int = 3) -> List[Tuple[dict, float]]:
         self.build_if_needed()
         if not self.chunks or self.index is None:
@@ -87,6 +111,11 @@ class VectorStore:
         except Exception:
             return []
         q = embed_texts([query])
+        if q.shape[1] != self.index.d:
+            self._rebuild_index()
+            if not self.chunks or self.index is None:
+                return []
+            q = embed_texts([query])
         faiss.normalize_L2(q)
         scores, indices = self.index.search(q, min(top_k, len(self.chunks)))
         results = []

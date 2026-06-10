@@ -4,45 +4,75 @@ from pathlib import Path
 
 MODEL_PATH = Path(__file__).parent / "best.pt"
 
-# 病害识别信息：id -> (名称, 描述, 建议)
-DISEASE_INFO = {
-    4: (
-        "毛虫危害",
-        "叶片可见虫孔或虫体，茶叶被啃食造成残缺，影响品质和卫生。",
-        "及时防治，采摘时剔除被害叶片，严重时应停止采摘进行虫害治理。"
+# 与 best.pt 训练类别一致：0-4、6-7 为病害/虫害，5 为正常茶叶
+CLASS_INFO = {
+    0: (
+        "茶黑腐病",
+        "叶片出现黑腐症状，叶色暗褐或发黑，严重时叶片枯死脱落。",
+        "加强茶园通风排水，及时清除病叶，必要时使用针对性杀菌剂防治。",
     ),
-    5: (
-        "霉变污染",
-        "茶叶受潮霉变，表面出现白霉或绿霉，有异味，汤色暗黑浑浊。",
-        "检查存储环境，控制湿度在70%以下，霉变茶叶不可饮用，需及时隔离。"
+    1: (
+        "茶褐斑病",
+        "叶片出现褐色圆形或不规则病斑，边缘清晰，影响光合与品质。",
+        "改善茶园通风，降低湿度，发病初期可喷施保护性杀菌剂。",
+    ),
+    2: (
+        "茶落叶病",
+        "叶片出现锈斑或落叶病特征，叶脉间变色，严重时提前落叶。",
+        "及时摘除病叶，加强肥水管理，必要时进行药剂防治。",
+    ),
+    3: (
+        "红蜘蛛危害",
+        "叶片背面可见红蜘蛛或细小白点，叶色失绿、出现灰白斑点。",
+        "加强监测，保持茶园湿度，发生时可使用专用杀螨剂防治。",
+    ),
+    4: (
+        "茶小绿叶蝉危害",
+        "叶片边缘卷曲、出现焦枯或黄化，为常见虫害特征。",
+        "及时采摘嫩梢，清除杂草，必要时使用低毒杀虫剂防治。",
     ),
     6: (
-        "菌类异常",
-        "茶叶表面出现白色、绿色或灰色霉点，是储存不当或过度潮湿的信号。",
-        "单独隔离存放，避免交叉污染，检查同批次茶叶，严重者应报废处理。"
+        "茶白星病",
+        "叶片出现白色星点状病斑，多从叶尖或叶缘开始扩展。",
+        "清除病叶，改善通风，发病期可喷施铜制剂等杀菌剂。",
     ),
     7: (
-        "茶果混入",
-        "茶叶中夹杂茶果或茶花，影响冲泡口感的纯净度。",
-        "通过筛分或风选去除，茶果不影响茶叶主体品质，但影响外观和口感。"
-    ),
-    8: (
-        "箬叶残留",
-        "茶叶中残留非茶类植物叶片（多为包装用箬叶），影响纯度。",
-        "加强采摘和加工清洁工艺，残留量多时应重新筛选。"
+        "茶叶病害",
+        "检测到茶叶病害特征，建议进一步确认具体类型。",
+        "隔离病叶，检查同批次茶叶，必要时请专业人员鉴定处理。",
     ),
 }
 
-# 正常叶片的描述（用于未检出病害时的友好提示）
+HEALTHY_CLASS_ID = 5  # Tea leaf
+
 HEALTHY_INFO = (
-    "茶叶外观正常",
-    "未检测到明显霉变、虫蛀或其他可见缺陷，叶片完整，色泽正常。",
-    "继续保持良好存储环境：干燥、通风、避光，避免与异味物品混放。"
+    "未检出明显病害",
+    "未检测到明显病害或虫害特征，建议结合实物进一步确认。",
+    "若叶片有异常，可换角度、近距离重新拍摄；存储时保持干燥通风。",
 )
+
+NO_DETECTION_INFO = (
+    "未检出目标",
+    "未能从图片中识别到茶叶或病害特征，请重新拍摄。",
+    "建议在光线充足、背景简洁的环境下，将茶叶平铺或特写拍摄。",
+)
+
+CONF_THRESHOLD = 0.25
+
+_model = None
+
+
+def _get_model():
+    global _model
+    if _model is None:
+        from ultralytics import YOLO
+
+        _model = YOLO(str(MODEL_PATH))
+    return _model
 
 
 def predict_image(image_path: str, task: str = "disease") -> dict:
-    """YOLOv8 推理；无模型文件时返回演示结果。"""
+    """YOLOv8 病虫害检测；无模型文件时返回演示结果。"""
     if MODEL_PATH.exists():
         try:
             return _yolo_predict(image_path)
@@ -52,52 +82,59 @@ def predict_image(image_path: str, task: str = "disease") -> dict:
 
 
 def _yolo_predict(image_path: str) -> dict:
-    from ultralytics import YOLO
-
-    model = YOLO(str(MODEL_PATH))
+    model = _get_model()
     results = model(image_path, verbose=False)[0]
+    boxes = results.boxes
 
-    if not results.boxes or len(results.boxes) == 0:
-        return _healthy_predict()
+    if boxes is None or len(boxes) == 0:
+        return _result_from_info(NO_DETECTION_INFO, confidence=0.0)
 
-    # 取置信度最高的检测框
-    best_idx = int(results.boxes.conf.argmax())
-    box = results.boxes[best_idx]
-    cls_id = int(box.cls[best_idx])
-    conf = float(box.conf[best_idx])
+    disease_candidates = []
+    healthy_candidates = []
 
-    # 品种类别（0-3）视为正常茶叶
-    if cls_id in DISEASE_INFO:
-        name, desc, suggestion = DISEASE_INFO[cls_id]
-    elif cls_id <= 3:
-        return _healthy_predict()
-    else:
-        return {
-            "category": f"未知类别({cls_id})",
-            "confidence": round(conf, 4),
-            "description": "检测到未知类型目标，请上传更清晰的茶叶图片。",
-            "suggestion": "建议在光线充足、背景简洁的环境下拍摄茶叶图片。",
-            "task": "disease",
-        }
+    for i in range(len(boxes)):
+        cls_id = int(boxes.cls[i])
+        conf = float(boxes.conf[i])
+        if conf < CONF_THRESHOLD:
+            continue
+        if cls_id == HEALTHY_CLASS_ID:
+            healthy_candidates.append(conf)
+        else:
+            disease_candidates.append((cls_id, conf))
 
+    # 优先返回置信度最高的病害/虫害，避免被“正常茶叶”误判覆盖
+    if disease_candidates:
+        cls_id, conf = max(disease_candidates, key=lambda item: item[1])
+        if cls_id in CLASS_INFO:
+            name, desc, suggestion = CLASS_INFO[cls_id]
+            return _build_result(name, conf, desc, suggestion)
+        label = model.names.get(cls_id, f"类别{cls_id}")
+        return _build_result(
+            label,
+            conf,
+            f"检测到「{label}」，请上传更清晰的茶叶图片以便进一步确认。",
+            "建议在光线充足、背景简洁的环境下拍摄茶叶图片。",
+        )
+
+    if healthy_candidates:
+        return _result_from_info(HEALTHY_INFO, confidence=round(max(healthy_candidates), 4))
+
+    return _result_from_info(NO_DETECTION_INFO, confidence=0.0)
+
+
+def _build_result(category: str, confidence: float, description: str, suggestion: str) -> dict:
     return {
-        "category": name,
-        "confidence": round(conf, 4),
-        "description": desc,
+        "category": category,
+        "confidence": round(confidence, 4),
+        "description": description,
         "suggestion": suggestion,
         "task": "disease",
     }
 
 
-def _healthy_predict() -> dict:
-    name, desc, suggestion = HEALTHY_INFO
-    return {
-        "category": name,
-        "confidence": 1.0,
-        "description": desc,
-        "suggestion": suggestion,
-        "task": "disease",
-    }
+def _result_from_info(info: tuple[str, str, str], confidence: float) -> dict:
+    name, desc, suggestion = info
+    return _build_result(name, confidence, desc, suggestion)
 
 
 def _demo_predict() -> dict:
@@ -105,7 +142,7 @@ def _demo_predict() -> dict:
     return {
         "category": name,
         "confidence": 0.0,
-        "description": desc + "（演示模式：放置 best.pt 以启用真实识别）",
+        "description": desc + "（演示模式：放置 best.pt 以启用真实检测）",
         "suggestion": suggestion,
         "task": "disease",
     }

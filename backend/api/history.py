@@ -8,12 +8,10 @@ from sqlalchemy.orm import Session
 from backend.database.mysql import get_db
 from backend.models.record import Favorite, QARecord, RecognitionRecord
 from backend.models.user import User
-from backend.services import stats_service
 from backend.utils.validators import (
     sanitize_fav_type,
     sanitize_openid,
     sanitize_page_params,
-    sanitize_string,
     sanitize_html,
 )
 
@@ -214,17 +212,3 @@ def delete_favorite(
         db.delete(fav)
         db.commit()
     return {"code": 0, "message": "已取消收藏"}
-
-
-@router.get("/stats/recognition")
-def get_recognition_stats(
-    openid: str = Query(...),
-    db: Session = Depends(get_db),
-):
-    """获取用户识别统计数据（饼图 + 柱状图数据）"""
-    openid = sanitize_openid(openid) or openid
-    user = db.query(User).filter(User.openid == openid).first()
-    if not user:
-        return {"code": 401, "message": "请先登录"}
-    stats = stats_service.get_recognition_stats(db, openid)
-    return {"code": 0, "data": stats}

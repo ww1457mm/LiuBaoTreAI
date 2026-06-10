@@ -19,8 +19,6 @@ function buildUrl(url, method, data) {
 }
 
 function request(options) {
-  const app = getApp()
-  const openid = (app && app.globalData.openid) || wx.getStorageSync('openid') || ''
   const method = (options.method || 'GET').toUpperCase()
   const fullUrl = BASE_URL + buildUrl(options.url, method, options.data)
 
