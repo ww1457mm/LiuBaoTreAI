@@ -170,7 +170,10 @@ Page({
     // 输入联想
     mapService.getSuggestion(keyword).then((results) => {
       this.setData({ searchResults: results, showSearchResults: true })
-    }).catch(() => {})
+    }).catch((err) => {
+      console.error('[地图搜索] 联想失败:', err)
+      this.setData({ searchResults: [], showSearchResults: false })
+    })
   },
 
   onSearchConfirm() {
@@ -182,7 +185,8 @@ Page({
     mapService.geocoder(keyword).then((result) => {
       this.addSearchMarker(result.location, keyword, result.formatted_addresses && result.formatted_addresses.recommend)
       this.setData({ searching: false, showSearchResults: false })
-    }).catch(() => {
+    }).catch((err) => {
+      console.error('[地图搜索] 地理编码失败，降级到POI搜索:', err)
       // 降级为 POI 搜索
       const loc = this.data.hasLocation
         ? { latitude: this.data.userLat, longitude: this.data.userLng }
@@ -195,9 +199,11 @@ Page({
           wx.showToast({ title: '未找到相关地点', icon: 'none' })
         }
         this.setData({ searching: false, showSearchResults: false })
-      }).catch(() => {
+      }).catch((err2) => {
+        console.error('[地图搜索] POI搜索失败:', err2)
         this.setData({ searching: false })
-        wx.showToast({ title: '搜索失败', icon: 'none' })
+        const msg = err2 && err2.message ? err2.message : '搜索失败，请检查网络或地图配置'
+        wx.showToast({ title: msg, icon: 'none', duration: 3000 })
       })
     })
   },
@@ -352,6 +358,7 @@ Page({
       wx.hideLoading()
     }).catch((err) => {
       wx.hideLoading()
+      console.error('[地图导航] 路线规划失败:', err)
       wx.showToast({ title: err.message || '路线规划失败', icon: 'none' })
     })
   },

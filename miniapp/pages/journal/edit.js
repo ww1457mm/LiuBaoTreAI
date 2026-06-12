@@ -1,4 +1,4 @@
-const { request, uploadFile } = require('../../utils/request')
+const { request, uploadJournalImage } = require('../../utils/request')
 
 const TEA_TYPES = [
   { key: 'liubao', name: '六堡茶' },
@@ -110,9 +110,13 @@ Page({
     }
 
     if (image) {
-      uploadFile(image).then((res) => {
-        doSave(res.image_url || res.data || '')
-      }).catch(() => doSave(''))
+      uploadJournalImage(image, openid).then((res) => {
+        doSave(res.image_url || '')
+      }).catch((err) => {
+        console.error('[日记] 图片上传失败:', err)
+        wx.showToast({ title: '图片上传失败，将仅保存文字', icon: 'none' })
+        doSave('')
+      })
     } else {
       doSave('')
     }

@@ -17,31 +17,10 @@ App({
       this.ensureUser(cached)
       return
     }
-    wx.login({
-      success: (res) => {
-        if (!res.code) {
-          this.devLogin()
-          return
-        }
-        request({
-          url: '/api/user/login/wechat',
-          method: 'POST',
-          data: { code: res.code }
-        }).then((data) => {
-          this.setUserSession(data)
-        }).catch(() => {
-          this.devLogin()
-        })
-      },
-      fail: () => {
-        this.devLogin()
-      }
-    })
-  },
-
-  devLogin() {
-    const openid = 'dev_guest_' + Date.now()
-    this.ensureUser(openid)
+    // 未登录，跳转到登录页
+    if (typeof wx !== 'undefined' && wx.reLaunch) {
+      wx.reLaunch({ url: '/pages/login/login' })
+    }
   },
 
   ensureUser(openid) {
@@ -60,7 +39,7 @@ App({
         data: { openid }
       }).then((data) => {
         this.setUserSession(data)
-      })
+      }).catch(() => {})
     })
   },
 
@@ -70,5 +49,15 @@ App({
     wx.setStorageSync('openid', data.openid)
     this.globalData.userInfo = data
     wx.setStorageSync('userInfo', data)
+    // 通知所有页面刷新用户信息
+    const pages = getCurrentPages()
+    pages.forEach(page => {
+      if (page.onUserLoginReady) page.onUserLoginReady(data)
+    })
+  },
+
+  isLoggedIn() {
+    const app = getApp()
+    return !!(app.globalData.userInfo || wx.getStorageSync('userInfo'))
   }
 })

@@ -49,7 +49,22 @@ Page({
         }
       })
       .catch((err) => {
-        wx.showToast({ title: err.message || '网络错误，请检查后端', icon: 'none' })
+        const msg = err && err.message ? err.message : ''
+        if (err && err.code === 401) {
+          wx.showModal({
+            title: '请先登录',
+            content: '识别功能需要登录后才能使用，是否去登录？',
+            confirmText: '去登录',
+            cancelText: '取消',
+            success: (res) => {
+              if (res.confirm) wx.navigateTo({ url: '/pages/login/login' })
+            }
+          })
+        } else if (msg.includes('timeout') || msg.includes('网络')) {
+          wx.showToast({ title: '网络连接超时，请检查网络', icon: 'none' })
+        } else {
+          wx.showToast({ title: msg || '请求失败，请检查后端服务', icon: 'none' })
+        }
       })
       .finally(() => this.setData({ loading: false }))
   }

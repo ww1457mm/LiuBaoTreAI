@@ -82,9 +82,12 @@ function getSuggestion(keyword, region) {
  */
 function searchPOI(keyword, location, distance) {
   return new Promise((resolve, reject) => {
+    const locationStr = typeof location === 'object'
+      ? location.latitude + ',' + location.longitude
+      : location
     qqmapsdk.search({
       keyword,
-      location,
+      location: locationStr,
       distance: distance || 5000,
       success: (res) => resolve(res.data || []),
       fail: (err) => reject(err)
@@ -155,10 +158,47 @@ function planRoute(from, to, mode) {
 
 /**
  * 解码腾讯地图压缩编码的 polyline 坐标
- * @param {string} coors 压缩坐标串
+ * @param {string|Array<number>} coors 压缩坐标串 或 数字数组
  * @returns {Array<{latitude, longitude}>}
  */
 function decodePolyline(coors) {
+  // 腾讯地图路线规划返回的是数字数组，不是字符串
+  if (Array.isArray(coors)) {
+    const points = []
+    let index = 0
+    const len = coors.length
+    let lat = 0
+    let lng = 0
+
+    while (index < len) {
+      let b, shift = 0, result = 0
+      do {
+        b = coors[index++]
+        result |= (b & 0x1f) << shift
+        shift += 5
+      } while (b >= 0x20)
+      const dlat = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1))
+      lat += dlat
+
+      shift = 0
+      result = 0
+      do {
+        b = coors[index++]
+        result |= (b & 0x1f) << shift
+        shift += 5
+      } while (b >= 0x20)
+      const dlng = ((result & 1) !== 0 ? ~(result >> 1) : (result >> 1))
+      lng += dlng
+
+      points.push({
+        latitude: lat / 1e5,
+        longitude: lng / 1e5
+      })
+    }
+    return points
+  }
+
+  // 字符串格式（旧版兼容）
   const points = []
   let index = 0
   const len = coors.length

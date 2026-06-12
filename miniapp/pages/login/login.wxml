@@ -1,0 +1,86 @@
+<wxs module="utils">
+module.exports = {
+  canSubmit: function(chosenAvatar, chosenNickname) {
+    return chosenAvatar && chosenNickname
+  }
+}
+</wxs>
+
+<view class="page">
+  <!-- 背景装饰 -->
+  <view class="bg-decor">
+    <view class="leaf leaf-1">🍃</view>
+    <view class="leaf leaf-2">🌿</view>
+    <view class="leaf leaf-3">🍃</view>
+  </view>
+
+  <!-- 主内容 -->
+  <view class="content">
+    <!-- Logo 区 -->
+    <view class="logo-section">
+      <view class="logo-wrap">
+        <view class="logo-emoji">🍵</view>
+        <view class="logo-ring"></view>
+      </view>
+      <text class="app-name">茶侦探</text>
+      <text class="app-subtitle">用 AI 解锁六堡茶文化密码</text>
+    </view>
+
+    <!-- 卡片 -->
+    <view class="card">
+
+      <!-- 头像：整块居中 -->
+      <view class="avatar-block">
+        <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+          <view class="avatar-ring-outer {{chosenAvatar ? 'chosen' : ''}}">
+            <view class="avatar-ring-inner">
+              <image class="avatar-img" src="{{avatar || defaultAvatar}}" mode="aspectFill" />
+              <view class="avatar-overlay">
+                <text class="overlay-icon">📷</text>
+                <text class="overlay-text" wx:if="{{!chosenAvatar}}">选择头像</text>
+                <text class="overlay-text" wx:else>更换头像</text>
+              </view>
+            </view>
+          </view>
+        </button>
+        <text class="avatar-hint">让茶侦探记住你的样子</text>
+      </view>
+
+      <!-- 昵称：整块居中 -->
+      <view class="nickname-block">
+        <text class="field-label">我的昵称</text>
+        <view class="input-wrap {{chosenNickname ? 'filled' : ''}}">
+          <text class="input-icon">✏️</text>
+          <input
+            class="field-input"
+            type="nickname"
+            placeholder="点击获取微信昵称"
+            placeholder-class="placeholder"
+            value="{{nickname}}"
+            bindblur="onNicknameInput"
+            bindinput="onNicknameInput"
+          />
+        </view>
+      </view>
+
+      <!-- 登录按钮 -->
+      <button
+        class="login-btn {{utils.canSubmit(chosenAvatar, chosenNickname) ? 'on' : 'off'}}"
+        bindtap="doLogin"
+      >
+        <text class="btn-text" wx:if="{{!loading}}">开始探索</text>
+        <text class="btn-text" wx:else>登录中...</text>
+        <text class="btn-arrow" wx:if="{{!loading}}">→</text>
+      </button>
+
+      <!-- 协议 -->
+      <text class="policy">登录即表示同意《用户协议》和《隐私政策》</text>
+    </view>
+  </view>
+
+  <!-- 底部 -->
+  <view class="footer">
+    <view class="footer-line"></view>
+    <text class="footer-text">六堡茶文化传播平台</text>
+  </view>
+</view>

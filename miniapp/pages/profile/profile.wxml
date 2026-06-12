@@ -11,11 +11,13 @@
 
   <!-- 用户信息区 -->
   <view class="profile-section">
-    <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-      <image class="avatar" src="{{userInfo.avatar || defaultAvatar}}" mode="aspectFill" />
-      <view class="avatar-edit">编辑</view>
-    </button>
-    <input class="nickname" type="nickname" placeholder="点击设置昵称" value="{{userInfo.nickname}}" bindblur="onNickname" />
+    <view class="profile-header">
+      <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{userInfo.avatar || defaultAvatar}}" mode="aspectFill" />
+        <view class="avatar-edit">编辑</view>
+      </button>
+      <input class="nickname" type="nickname" placeholder="点击设置昵称" value="{{userInfo.nickname}}" bindblur="onNickname" />
+    </view>
     <view class="user-badge">
       <text class="badge-icon">🍵</text>
       <text>六堡茶文化爱好者</text>

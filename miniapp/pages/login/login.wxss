@@ -1,0 +1,378 @@
+/* ============================================================
+   页面容器
+   ============================================================ */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #060f08;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 底部渐变光晕 */
+.page::after {
+  content: '';
+  position: absolute;
+  bottom: -200rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800rpx;
+  height: 400rpx;
+  background: radial-gradient(ellipse at center, rgba(74, 140, 63, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   背景装饰
+   ============================================================ */
+.bg-decor {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.leaf {
+  position: absolute;
+  font-size: 80rpx;
+  opacity: 0.06;
+  animation: drift 20s ease-in-out infinite;
+}
+
+.leaf-1 { top: 8%;  left: -5%; animation-delay: 0s;   animation-duration: 22s; }
+.leaf-2 { top: 30%; right: -8%; animation-delay: -7s;  animation-duration: 18s; }
+.leaf-3 { bottom: 20%; left: 10%; animation-delay: -14s; animation-duration: 25s; }
+
+@keyframes drift {
+  0%   { transform: translateY(0) rotate(0deg);    opacity: 0.06; }
+  50%  { transform: translateY(-30rpx) rotate(10deg); opacity: 0.1; }
+  100% { transform: translateY(0) rotate(0deg);    opacity: 0.06; }
+}
+
+/* ============================================================
+   主内容
+   ============================================================ */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 56rpx 0;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================================
+   Logo 区
+   ============================================================ */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 56rpx;
+}
+
+.logo-wrap {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+
+.logo-emoji {
+  font-size: 120rpx;
+  position: relative;
+  z-index: 2;
+  animation: breathe 4s ease-in-out infinite;
+  filter: drop-shadow(0 12rpx 32rpx rgba(0,0,0,0.4));
+}
+
+.logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3rpx solid rgba(120, 200, 90, 0.2);
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.06); }
+}
+
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1);   opacity: 0.2; }
+  50%       { transform: scale(1.15); opacity: 0.08; }
+}
+
+.app-name {
+  font-size: 60rpx;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 8rpx;
+  margin-bottom: 10rpx;
+  text-shadow: 0 4rpx 24rpx rgba(0,0,0,0.5);
+}
+
+.app-subtitle {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 3rpx;
+}
+
+/* ============================================================
+   卡片
+   ============================================================ */
+.card {
+  width: 100%;
+  background: linear-gradient(165deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+  border: 1rpx solid rgba(255,255,255,0.1);
+  border-radius: 40rpx;
+  padding: 48rpx 48rpx 44rpx;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24rpx 80rpx rgba(0,0,0,0.4), inset 0 1rpx 0 rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ============================================================
+   头像选择区
+   ============================================================ */
+.avatar-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 44rpx;
+}
+
+.avatar-btn {
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  line-height: 1;
+  display: block;
+  width: 100%;
+}
+
+.avatar-btn::after { border: none; }
+
+.avatar-ring-outer {
+  width: 168rpx;
+  height: 168rpx;
+  border-radius: 50%;
+  padding: 6rpx;
+  background: conic-gradient(from 200deg, rgba(120,200,80,0.6), rgba(60,120,40,0.3), rgba(120,200,80,0.6));
+  animation: rotate-border 4s linear infinite;
+  box-shadow: 0 0 32rpx rgba(80,160,50,0.3);
+  transition: box-shadow 0.3s;
+  margin: 0 auto;
+  display: block;
+}
+
+.avatar-ring-outer.chosen {
+  box-shadow: 0 0 40rpx rgba(80,200,60,0.5);
+}
+
+@keyframes rotate-border {
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
+}
+
+.avatar-ring-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255,255,255,0.15);
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4rpx;
+  transition: background 0.2s;
+}
+
+.overlay-icon {
+  font-size: 32rpx;
+}
+
+.overlay-text {
+  font-size: 20rpx;
+  color: #fff;
+  font-weight: 500;
+}
+
+.avatar-hint {
+  margin-top: 18rpx;
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.28);
+}
+
+/* ============================================================
+   昵称输入区
+   ============================================================ */
+.nickname-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 560rpx;
+  margin: 0 auto 40rpx;
+}
+
+.field-label {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 2rpx;
+  margin-bottom: 16rpx;
+  text-align: center;
+  width: 100%;
+}
+
+.input-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  background: rgba(255,255,255,0.05);
+  border: 2rpx solid rgba(255,255,255,0.1);
+  border-radius: 20rpx;
+  padding: 28rpx 28rpx;
+  box-sizing: border-box;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.input-wrap:focus-within {
+  border-color: rgba(120,200,80,0.5);
+  background: rgba(120,200,80,0.05);
+  box-shadow: 0 0 0 4rpx rgba(120,200,80,0.1);
+}
+
+.input-icon {
+  font-size: 28rpx;
+  flex-shrink: 0;
+  opacity: 0.4;
+}
+
+.field-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #fff;
+  min-height: 0;
+  caret-color: #5cb85c;
+}
+
+.placeholder {
+  color: rgba(255,255,255,0.22);
+}
+
+/* ============================================================
+   登录按钮
+   ============================================================ */
+.login-btn {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 60rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  font-size: 0;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s, background 0.3s;
+}
+
+.login-btn::after { border: none; }
+
+.login-btn.on {
+  background: linear-gradient(135deg, #5cb85c 0%, #3d8b40 100%);
+  box-shadow: 0 12rpx 40rpx rgba(60,140,50,0.45), 0 0 0 1rpx rgba(120,200,80,0.2);
+}
+
+.login-btn.on:active {
+  transform: scale(0.97);
+  box-shadow: 0 6rpx 20rpx rgba(60,140,50,0.3);
+}
+
+.login-btn.on:active .btn-arrow {
+  transform: translateX(6rpx);
+}
+
+.login-btn.off {
+  background: rgba(255,255,255,0.06);
+  box-shadow: none;
+  opacity: 0.45;
+}
+
+.btn-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2rpx;
+}
+
+.btn-arrow {
+  font-size: 32rpx;
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+/* 协议 */
+.policy {
+  display: block;
+  text-align: center;
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.18);
+  margin-top: 22rpx;
+}
+
+/* ============================================================
+   底部
+   ============================================================ */
+.footer {
+  padding: 36rpx 0 calc(48rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.footer-line {
+  width: 48rpx;
+  height: 4rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4rpx;
+}
+
+.footer-text {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.13);
+  letter-spacing: 3rpx;
+}

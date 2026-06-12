@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -8,6 +9,45 @@ from backend.models.user import User
 from backend.utils.validators import sanitize_openid, sanitize_string, sanitize_html
 
 router = APIRouter(prefix="/api", tags=["journal"])
+
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/jpg"}
+MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB
+
+# 复用 recognition_service 的上传逻辑
+from backend.services.recognition_service import UPLOAD_DIR as RECOG_UPLOAD_DIR, _compress_image
+import uuid
+
+
+def _save_journal_image(file_bytes: bytes, filename: str) -> str:
+    """压缩并保存日记图片，返回 /uploads/xxx 相对路径。"""
+    compressed_bytes, ext = _compress_image(file_bytes, filename)
+    save_name = f"journal_{uuid.uuid4().hex}{ext}"
+    save_path = RECOG_UPLOAD_DIR / save_name
+    save_path.write_bytes(compressed_bytes)
+    return f"/uploads/{save_name}"
+
+
+@router.post("/journal/upload")
+async def upload_journal_image(
+    openid: str = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    openid = sanitize_openid(openid) or openid
+    user = db.query(User).filter(User.openid == openid).first()
+    if not user:
+        return JSONResponse({"code": 401, "message": "请先登录"}, status_code=401)
+
+    content_type = file.content_type or "application/octet-stream"
+    if content_type not in ALLOWED_IMAGE_TYPES:
+        return JSONResponse({"code": 400, "message": "仅支持 JPG/PNG/WEBP 格式图片"}, status_code=400)
+
+    content = await file.read()
+    if len(content) > MAX_IMAGE_SIZE:
+        return JSONResponse({"code": 400, "message": "图片大小不能超过 10MB"}, status_code=400)
+
+    image_url = _save_journal_image(content, file.filename or "image.jpg")
+    return {"code": 0, "image_url": image_url}
 
 
 class JournalCreate(BaseModel):

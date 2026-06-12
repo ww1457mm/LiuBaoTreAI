@@ -21,6 +21,7 @@ async def recognize(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
+    print(f"[recognition] openid received: {openid}")
     openid = sanitize_openid(openid) or openid
     user = db.query(User).filter(User.openid == openid).first()
     if not user:

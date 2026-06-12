@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple
 import time
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from ai_models.rag.retriever import retrieve
 from backend.models.knowledge import KnowledgeBase
 
@@ -103,7 +104,35 @@ def search_knowledge(
     cached = _cache_get(cache_key)
     if cached:
         return cached
+
+    # 优先尝试向量搜索
     results = retrieve(query, top_k=min(page_size * 2, 20))
+
+    # 如果向量搜索失败或无结果，降级到数据库模糊搜索
+    if not results and db is not None:
+        search_pattern = f"%{query}%"
+        items = (
+            db.query(KnowledgeBase)
+            .filter(
+                or_(
+                    KnowledgeBase.title.like(search_pattern),
+                    KnowledgeBase.content.like(search_pattern)
+                )
+            )
+            .limit(page_size * 2)
+            .all()
+        )
+        results = [
+            {
+                "title": k.title,
+                "content": k.content[:200] + ("..." if len(k.content) > 200 else ""),
+                "source": k.source,
+                "category": k.category,
+                "score": 1.0,
+            }
+            for k in items
+        ]
+
     offset = (page - 1) * page_size
     paginated = results[offset:offset + page_size]
     # 向量搜索结果不带 DB id，需要通过标题匹配

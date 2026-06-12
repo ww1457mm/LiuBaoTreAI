@@ -10,14 +10,27 @@ Page({
   },
 
   onShow() {
+    const app = getApp()
     const cached = wx.getStorageSync('userInfo')
-    if (cached && cached.nickname) {
+    if (cached && cached.openid) {
       this.setData({ userInfo: cached })
+    } else if (app.globalData.userInfo && app.globalData.userInfo.openid) {
+      this.setData({ userInfo: app.globalData.userInfo })
+    } else {
+      wx.showModal({
+        title: '请先登录',
+        content: '查看个人信息需要先登录，是否去登录？',
+        confirmText: '去登录',
+        cancelText: '取消',
+        success: (res) => {
+          if (res.confirm) wx.navigateTo({ url: '/pages/login/login' })
+        }
+      })
+      return
     }
     this.ensureUser()
   },
 
-  // 确保用户已注册，再加载数据
   ensureUser() {
     const openid = getApp().globalData.openid || wx.getStorageSync('openid')
     if (!openid) return

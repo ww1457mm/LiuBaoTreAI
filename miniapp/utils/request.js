@@ -56,6 +56,7 @@ function uploadFile(filePath, formData) {
   const { BASE_URL } = require('./config')
   const app = getApp()
   const openid = (app && app.globalData.openid) || wx.getStorageSync('openid') || ''
+
   return new Promise((resolve, reject) => {
     wx.uploadFile({
       url: BASE_URL + '/api/recognition',
@@ -81,4 +82,32 @@ function uploadFile(filePath, formData) {
   })
 }
 
-module.exports = { request, uploadFile, BASE_URL }
+function uploadJournalImage(filePath, openid) {
+  const { BASE_URL } = require('./config')
+
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      url: BASE_URL + '/api/journal/upload',
+      filePath,
+      name: 'file',
+      formData: { openid },
+      success(res) {
+        try {
+          const data = JSON.parse(res.data)
+          if (data.code !== undefined && data.code !== 0) {
+            reject(data)
+          } else {
+            resolve(data)
+          }
+        } catch (e) {
+          reject({ message: '响应解析失败，请检查后端服务', raw: res.data })
+        }
+      },
+      fail(err) {
+        reject({ message: '上传失败，请检查网络连接', err })
+      }
+    })
+  })
+}
+
+module.exports = { request, uploadFile, uploadJournalImage, BASE_URL }

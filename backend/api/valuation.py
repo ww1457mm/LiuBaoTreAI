@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api", tags=["valuation"])
 class ValuationRequest(BaseModel):
     tea_name: str = Field(default="六堡茶", max_length=128)
     tea_type: str = Field(default="", max_length=64)
-    year: int = Field(default=5, ge=0, le=50)
+    year: int = Field(default=5, ge=0, le=100)
     appearance: str = Field(default="", max_length=256)
     storage: str = Field(default="干仓", max_length=64)
     origin: str = Field(default="", max_length=128)

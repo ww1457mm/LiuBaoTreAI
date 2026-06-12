@@ -66,6 +66,17 @@
   position: relative;
   z-index: 2;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 头像 + 昵称 合并居中 */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .avatar-btn {
@@ -106,6 +117,12 @@
   font-weight: 700;
   color: var(--color-text);
   text-align: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  caret-color: var(--color-primary);
+  margin: 0 auto;
+  width: 100%;
 }
 
 .user-badge {

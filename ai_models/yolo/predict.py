@@ -73,10 +73,17 @@ def _get_model():
 
 def predict_image(image_path: str, task: str = "disease") -> dict:
     """YOLOv8 病虫害检测；无模型文件时返回演示结果。"""
+    print(f"[predict] MODEL_PATH.exists(): {MODEL_PATH.exists()}, path: {MODEL_PATH}")
+
     if MODEL_PATH.exists():
         try:
-            return _yolo_predict(image_path)
-        except Exception:
+            result = _yolo_predict(image_path)
+            print(f"[predict] YOLO result: {result}")
+            return result
+        except Exception as e:
+            print(f"[predict] YOLO predict error: {e}")
+            import traceback
+            traceback.print_exc()
             pass
     return _demo_predict()
 
