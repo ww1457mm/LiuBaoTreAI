@@ -9,7 +9,6 @@ Page({
       { id: 'white', name: '白茶', icon: '🤍', temp: '90°C', ratio: '1:30', firstTime: 20, increment: 10, desc: '可煮可泡，越陈越香' }
     ],
     selected: null,
-    // 计时器状态
     brewing: false,
     paused: false,
     steepCount: 0,
@@ -17,7 +16,13 @@ Page({
     remainTime: 0,
     progress: 100,
     displayTime: '00',
-    timer: null
+    timer: null,
+    endTimestamp: 0,
+    pauseRemain: 0
+  },
+
+  onReady() {
+    this.drawProgress()
   },
 
   onUnload() {
@@ -38,35 +43,42 @@ Page({
         remainTime: 0,
         progress: 100,
         displayTime: '00'
-      })
+      }, () => this.drawProgress())
     }
   },
 
-  // 开始冲泡
   startBrew() {
     const { selected, steepCount } = this.data
     if (!selected) return
 
     const time = selected.firstTime + selected.increment * steepCount
+    const now = Date.now()
     this.setData({
       brewing: true,
       paused: false,
       steepCount: steepCount + 1,
       totalTime: time,
       remainTime: time,
+      endTimestamp: now + time * 1000,
       progress: 100,
-      displayTime: String(time)
-    })
+      displayTime: this._padTime(time)
+    }, () => this.drawProgress())
     this.startTimer()
+  },
+
+  _padTime(t) {
+    t = Math.max(0, Math.round(t))
+    return t < 10 ? '0' + t : String(t)
   },
 
   startTimer() {
     this.clearTimer()
-    this.data.timer = setInterval(() => {
-      let { remainTime, totalTime } = this.data
-      remainTime -= 1
+    const tick = () => {
+      const { endTimestamp, totalTime } = this.data
+      const now = Date.now()
+      const remain = Math.max(0, Math.round((endTimestamp - now) / 1000))
 
-      if (remainTime <= 0) {
+      if (remain <= 0) {
         this.clearTimer()
         this.setData({
           remainTime: 0,
@@ -74,8 +86,7 @@ Page({
           displayTime: '00',
           brewing: false,
           paused: false
-        })
-        // 震动提醒
+        }, () => this.drawProgress())
         wx.vibrateShort({ type: 'heavy' })
         setTimeout(() => wx.vibrateShort({ type: 'heavy' }), 300)
         setTimeout(() => wx.vibrateShort({ type: 'heavy' }), 600)
@@ -83,39 +94,50 @@ Page({
         return
       }
 
-      const progress = (remainTime / totalTime) * 100
+      const progress = totalTime > 0 ? (remain / totalTime) * 100 : 0
       this.setData({
-        remainTime,
-        progress,
-        displayTime: String(remainTime)
+        remainTime: remain,
+        progress: progress,
+        displayTime: this._padTime(remain)
       })
-    }, 1000)
+      this.drawProgress()
+    }
+
+    tick()
+    this.data.timer = setInterval(tick, 200)
   },
 
-  // 暂停/继续
   togglePause() {
     if (this.data.paused) {
+      const now = Date.now()
+      this.setData({
+        paused: false,
+        endTimestamp: now + this.data.pauseRemain * 1000
+      })
       this.startTimer()
-      this.setData({ paused: false })
     } else {
       this.clearTimer()
-      this.setData({ paused: true })
+      this.setData({
+        paused: true,
+        pauseRemain: this.data.remainTime
+      })
+      this.drawProgress()
     }
   },
 
-  // 重置当前泡
   resetTimer() {
     this.clearTimer()
+    var prevCount = Math.max(0, this.data.steepCount - 1)
     this.setData({
       brewing: false,
       paused: false,
+      steepCount: prevCount,
       remainTime: 0,
       progress: 100,
       displayTime: '00'
-    })
+    }, () => this.drawProgress())
   },
 
-  // 重新开始（从第1泡）
   restartAll() {
     this.clearTimer()
     this.setData({
@@ -126,7 +148,7 @@ Page({
       remainTime: 0,
       progress: 100,
       displayTime: '00'
-    })
+    }, () => this.drawProgress())
   },
 
   clearTimer() {
@@ -136,5 +158,41 @@ Page({
     }
   },
 
-  noop() {}
+  drawProgress() {
+    var ctx = wx.createCanvasContext('progressCanvas', this)
+    if (!ctx) return
+    var progress = this.data.progress
+    var pct = progress / 100
+
+    // Canvas 尺寸 320rpx ≈ 160px（在 2x 屏幕上）
+    var size = 160
+    var cx = size / 2
+    var cy = size / 2
+    var r = cx - 12
+    var lineWidth = 10
+
+    ctx.clearRect(0, 0, size, size)
+
+    // 背景圆环
+    ctx.beginPath()
+    ctx.arc(cx, cy, r, 0, 2 * Math.PI)
+    ctx.setStrokeStyle('#f0f0f0')
+    ctx.setLineWidth(lineWidth)
+    ctx.setLineCap('round')
+    ctx.stroke()
+
+    // 进度弧（从顶部顺时针）
+    if (pct > 0.001) {
+      var startAngle = -Math.PI / 2
+      var endAngle = startAngle + 2 * Math.PI * pct
+      ctx.beginPath()
+      ctx.arc(cx, cy, r, startAngle, endAngle)
+      ctx.setStrokeStyle('#2d5a27')
+      ctx.setLineWidth(lineWidth)
+      ctx.setLineCap('round')
+      ctx.stroke()
+    }
+
+    ctx.draw()
+  }
 })

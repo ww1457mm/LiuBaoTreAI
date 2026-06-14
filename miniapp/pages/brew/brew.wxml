@@ -48,29 +48,28 @@
 
   <!-- 计时器区域 -->
   <view class="timer-area" wx:if="{{selected}}">
-    <!-- 圆形进度 -->
+    <!-- 圆形进度（canvas 绘制） -->
     <view class="timer-circle">
-      <view class="circle-bg"></view>
-      <view class="circle-progress" style="background: conic-gradient(var(--color-primary) {{progress}}%, #f0f0f0 {{progress}}%)"></view>
+      <canvas canvas-id="progressCanvas" class="progress-canvas" id="progressCanvas"></canvas>
       <view class="circle-inner">
-        <text class="timer-num" wx:if="{{brewing}}">{{displayTime}}</text>
-        <text class="timer-label" wx:if="{{brewing}}">秒</text>
-        <text class="timer-start-text" wx:if="{{!brewing}}">开始</text>
+        <text class="timer-num" wx:if="{{brewing || paused}}">{{displayTime}}</text>
+        <text class="timer-label" wx:if="{{brewing || paused}}">秒</text>
+        <text class="timer-start-text" wx:if="{{!brewing && !paused}}">开始</text>
       </view>
     </view>
 
     <!-- 泡数 -->
     <view class="steep-info">
-      <text class="steep-label">第 {{steepCount + (brewing ? 0 : 0)}} 泡</text>
+      <text class="steep-label">第 {{steepCount}} 泡</text>
       <text class="steep-next" wx:if="{{!brewing && steepCount > 0}}">下一泡: {{selected.firstTime + selected.increment * steepCount}}s</text>
     </view>
 
     <!-- 控制按钮 -->
     <view class="controls">
-      <view class="ctrl-btn primary" wx:if="{{!brewing}}" bindtap="startBrew">
+      <view class="ctrl-btn primary" wx:if="{{!brewing && !paused}}" bindtap="startBrew">
         <text>{{steepCount === 0 ? '开始冲泡' : '第' + (steepCount + 1) + '泡'}}</text>
       </view>
-      <block wx:if="{{brewing}}">
+      <block wx:if="{{brewing || paused}}">
         <view class="ctrl-btn secondary" bindtap="togglePause">
           <text>{{paused ? '继续' : '暂停'}}</text>
         </view>
@@ -81,7 +80,7 @@
     </view>
 
     <!-- 重新开始 -->
-    <view class="restart" wx:if="{{steepCount > 0 && !brewing}}" bindtap="restartAll">
+    <view class="restart" wx:if="{{steepCount > 0 && !brewing && !paused}}" bindtap="restartAll">
       <text>🔄 重新开始</text>
     </view>
   </view>

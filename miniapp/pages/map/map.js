@@ -355,9 +355,9 @@ Page({
         })
       }
 
-      wx.hideLoading()
+      wx.hideLoading({ fail: () => {} })
     }).catch((err) => {
-      wx.hideLoading()
+      wx.hideLoading({ fail: () => {} })
       console.error('[地图导航] 路线规划失败:', err)
       wx.showToast({ title: err.message || '路线规划失败', icon: 'none' })
     })

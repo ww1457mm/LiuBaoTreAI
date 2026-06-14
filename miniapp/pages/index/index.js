@@ -91,7 +91,7 @@ Page({
       .catch(() => {
         wx.showToast({ title: '加载失败', icon: 'none' })
       })
-      .finally(() => wx.hideLoading())
+      .finally(() => wx.hideLoading({ fail: () => {} }))
   },
 
   goBrew() { wx.navigateTo({ url: '/pages/brew/brew' }) },

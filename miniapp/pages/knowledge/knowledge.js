@@ -14,7 +14,6 @@ Page({
   data: {
     list: [],
     category: '',
-    // 分类列表：全部 + 各分类
     categories: [
       { key: '', label: '全部' },
       { key: 'history', label: '历史文化' },
@@ -26,7 +25,9 @@ Page({
       { key: 'origin', label: '产地分布' }
     ],
     keyword: '',
-    loading: true
+    loading: false,
+    page: 1,
+    hasMore: true
   },
 
   onLoad() {
@@ -34,15 +35,14 @@ Page({
   },
 
   onShow() {
-    // 每次页面显示时刷新列表（从详情页返回时可能数据有变化）
-    if (!this.data.keyword) {
+    if (!this.data.keyword && this.data.list.length === 0) {
       this.loadList()
     }
   },
 
   loadList() {
-    this.setData({ loading: true })
-    const params = {}
+    this.setData({ loading: true, page: 1, list: [], hasMore: true })
+    const params = { page: 1, page_size: 20 }
     if (this.data.category) params.category = this.data.category
     request({ url: '/api/knowledge', data: params })
       .then((res) => {
@@ -51,7 +51,30 @@ Page({
             ...item,
             category: CAT_MAP[item.category] || item.category
           }))
-          this.setData({ list })
+          this.setData({ list, page: 1, hasMore: res.has_more !== false })
+        }
+      })
+      .finally(() => this.setData({ loading: false }))
+  },
+
+  loadMore() {
+    if (this.data.loading || !this.data.hasMore) return
+    const nextPage = this.data.page + 1
+    this.setData({ loading: true })
+    const params = { page: nextPage, page_size: 20 }
+    if (this.data.category) params.category = this.data.category
+    request({ url: '/api/knowledge', data: params })
+      .then((res) => {
+        if (res.code === 0) {
+          const newItems = (res.data || []).map((item) => ({
+            ...item,
+            category: CAT_MAP[item.category] || item.category
+          }))
+          this.setData({
+            list: [...this.data.list, ...newItems],
+            page: nextPage,
+            hasMore: res.has_more !== false
+          })
         }
       })
       .finally(() => this.setData({ loading: false }))
@@ -60,7 +83,7 @@ Page({
   filterCat(e) {
     const cat = e.currentTarget.dataset.cat
     const newCat = this.data.category === cat ? '' : cat
-    this.setData({ category: newCat, keyword: '', loading: true })
+    this.setData({ category: newCat, keyword: '' })
     this.loadList()
   },
 
@@ -75,15 +98,15 @@ Page({
       this.loadList()
       return
     }
-    this.setData({ loading: true, category: '' })
-    request({ url: '/api/knowledge/search/query', data: { q } })
+    this.setData({ loading: true, category: '', list: [], page: 1, hasMore: true })
+    request({ url: '/api/knowledge/search/query', data: { q, page: 1, page_size: 20 } })
       .then((res) => {
         if (res.code === 0) {
           const list = (res.data || []).map((item) => ({
             ...item,
             category: CAT_MAP[item.category] || item.category
           }))
-          this.setData({ list })
+          this.setData({ list, hasMore: list.length >= 20 })
         }
       })
       .finally(() => this.setData({ loading: false }))
@@ -92,7 +115,7 @@ Page({
   goDetail(e) {
     const id = e.currentTarget.dataset.id
     if (id) {
-      wx.navigateTo({ url: `/pages/knowledge/detail?id=${id}` })
+      wx.navigateTo({ url: '/pages/knowledge/detail?id=' + id })
     }
   }
 })

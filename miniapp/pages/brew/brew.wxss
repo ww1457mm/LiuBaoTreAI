@@ -11,6 +11,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .brew-header::before {
   content: '☕';
   position: absolute;
@@ -148,20 +149,11 @@
   margin-bottom: 32rpx;
 }
 
-.circle-bg {
+.progress-canvas {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: #f0f0f0;
-}
-
-.circle-progress {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  mask: radial-gradient(transparent 130rpx, #000 131rpx);
-  -webkit-mask: radial-gradient(transparent 130rpx, #000 131rpx);
-  transition: background 0.3s linear;
+  width: 320rpx;
+  height: 320rpx;
 }
 
 .circle-inner {

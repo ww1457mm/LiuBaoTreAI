@@ -1,5 +1,8 @@
 .page {
-  padding-bottom: 40rpx;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* 搜索 */
@@ -8,6 +11,7 @@
   padding: 24rpx;
   align-items: center;
   gap: 16rpx;
+  flex-shrink: 0;
 }
 
 .search-input-wrap {
@@ -50,6 +54,7 @@
 .categories {
   white-space: nowrap;
   padding-bottom: 8rpx;
+  flex-shrink: 0;
 }
 
 .cat-list {
@@ -75,6 +80,16 @@
   border-color: transparent;
   font-weight: 500;
   box-shadow: 0 4rpx 12rpx rgba(45, 90, 39, 0.2);
+}
+
+/* 可滚动列表区 */
+.list-scroll {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.list {
+  padding-bottom: 40rpx;
 }
 
 /* 列表项 */
@@ -132,4 +147,16 @@
   font-weight: 500;
 }
 
-/* 加载状态 — 使用全局 .loading-wrap / .loading-spinner */
+/* 加载更多 */
+.load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32rpx;
+  gap: 12rpx;
+}
+
+/* 加载状态 */
+.loading-wrap {
+  flex: 1;
+}

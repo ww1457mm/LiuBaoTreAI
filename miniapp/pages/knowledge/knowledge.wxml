@@ -17,23 +17,32 @@
   </scroll-view>
 
   <!-- 加载状态 -->
-  <view class="loading-wrap" wx:if="{{loading}}">
+  <view class="loading-wrap" wx:if="{{loading && page === 1}}">
     <view class="loading-spinner"></view>
     <text class="loading-text">加载中...</text>
   </view>
 
-  <!-- 文章列表 -->
-  <view class="list" wx:if="{{!loading}}">
-    <view class="item card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
-      <view class="item-header">
-        <text class="item-title">{{item.title}}</text>
-        <text class="item-cat">{{item.category}}</text>
+  <!-- 文章列表（可滚动加载） -->
+  <scroll-view class="list-scroll" scroll-y enhanced bindscrolltolower="loadMore" lower-threshold="100" wx:if="{{!loading || page > 1}}">
+    <view class="list">
+      <view class="item card" wx:for="{{list}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+        <view class="item-header">
+          <text class="item-title">{{item.title}}</text>
+          <text class="item-cat">{{item.category}}</text>
+        </view>
+        <text class="item-content">{{item.content}}</text>
+        <view class="item-footer">
+          <text class="read-more">阅读全文 ›</text>
+        </view>
       </view>
-      <text class="item-content">{{item.content}}</text>
-      <view class="item-footer">
-        <text class="read-more">阅读全文 ›</text>
+      <view class="empty-state" wx:if="{{!loading && list.length===0}}">暂无相关内容</view>
+      <view class="load-more" wx:if="{{loading && page > 1}}">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载更多...</text>
+      </view>
+      <view class="load-more" wx:if="{{!hasMore && list.length > 0}}">
+        <text class="loading-text">— 已加载全部 {{list.length}} 篇 —</text>
       </view>
     </view>
-    <view class="empty-state" wx:if="{{!loading && list.length===0}}">暂无相关内容</view>
-  </view>
+  </scroll-view>
 </view>
