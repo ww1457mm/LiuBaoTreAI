@@ -45,6 +45,37 @@ Page({
 
     this.setData({ loading: true })
 
+    const app = getApp()
+    const existingOpenid = wx.getStorageSync('openid')
+
+    // 如果已有 openid，直接使用，避免重复调用 wx.login() 生成新 openid
+    if (existingOpenid) {
+      const userInfo = {
+        openid: existingOpenid,
+        nickname: this.data.nickname || '茶友',
+        avatar: this.data.avatar || ''
+      }
+      app.globalData.openid = existingOpenid
+      app.globalData.userInfo = userInfo
+      wx.setStorageSync('userInfo', userInfo)
+
+      // 更新昵称和头像
+      request({
+        url: '/api/user/profile',
+        method: 'PUT',
+        data: {
+          openid: existingOpenid,
+          nickname: this.data.nickname || '茶友',
+          avatar: this.data.avatar || ''
+        }
+      }).catch(() => {})
+
+      wx.showToast({ title: '登录成功', icon: 'success' })
+      setTimeout(() => this.goHome(), 800)
+      return
+    }
+
+    // 没有缓存的 openid，调用微信登录获取
     wx.login({
       success: (res) => {
         if (!res.code) {
@@ -58,7 +89,6 @@ Page({
           data: { code: res.code }
         }).then((data) => {
           if (data && data.openid) {
-            const app = getApp()
             const userInfo = {
               ...data,
               nickname: this.data.nickname || '茶友',

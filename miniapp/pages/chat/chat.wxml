@@ -1,53 +1,108 @@
+<!--
+  聊天页面模板 - AI 问答功能的界面结构
+
+  页面结构：
+  1. 聊天区域（scroll-view）- 显示消息列表
+     - 欢迎消息（无消息时显示）
+     - 消息列表（用户消息 + AI 回答）
+     - 加载动画（等待 AI 回答时显示）
+
+  2. 快捷问题（scroll-view）- 水平滚动的快捷标签
+
+  3. 输入栏（input-bar）- 输入框和发送按钮
+
+  数据绑定：
+  - messages: 消息列表
+  - input: 输入框内容
+  - sending: 是否正在发送
+  - scrollId: 滚动定位 ID
+  - quickList: 快捷问题列表
+-->
+
 <view class="page">
-  <!-- 聊天区域 -->
+  <!-- ========== 聊天区域 ========== -->
+  <!--
+    scroll-view: 可滚动的容器
+    scroll-y: 启用垂直滚动
+    scroll-into-view: 滚动到指定元素（自动滚动到最新消息）
+    scroll-with-animation: 滚动时使用动画
+    enhanced: 启用增强性能模式
+    show-scrollbar="{{false}}": 隐藏滚动条
+  -->
   <scroll-view class="chat-list" scroll-y scroll-into-view="{{scrollId}}" scroll-with-animation enhanced show-scrollbar="{{false}}">
-    <!-- 欢迎消息 -->
+
+    <!-- ========== 欢迎消息 ========== -->
+    <!-- 无消息时显示欢迎界面，包含 Logo、标题、描述和快捷问题 -->
     <view class="welcome" wx:if="{{messages.length===0}}">
       <view class="welcome-icon">🍵</view>
       <text class="welcome-title">茶侦探 AI 助手</text>
       <text class="welcome-text">你好！我是六堡茶 AI 助手，可以回答关于六堡茶的历史文化、制作工艺、冲泡方法、存储收藏等问题。</text>
+      <!-- 快捷问题标签 -->
       <view class="welcome-tags">
         <text class="wtag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">{{item}}</text>
       </view>
     </view>
 
-    <!-- 消息列表 -->
+    <!-- ========== 消息列表 ========== -->
+    <!--
+      wx:for: 遍历 messages 数组
+      wx:key: 使用消息 id 作为唯一标识
+      动态类名: 根据 role 添加 user 或 assistant 类
+      id: 用于 scroll-into-view 定位
+    -->
     <block wx:for="{{messages}}" wx:key="id">
       <view class="msg-row {{item.role}}" id="msg-{{item.id}}">
+
+        <!-- AI 头像（左侧） -->
         <view class="avatar" wx:if="{{item.role!=='user'}}">
           <text class="avatar-emoji">🍵</text>
         </view>
+
+        <!-- 消息内容区域 -->
         <view class="msg-body">
+          <!-- 消息气泡 -->
           <view class="bubble {{item.role}}">
             <text class="bubble-text">{{item.content}}</text>
           </view>
-          <!-- 参考来源 -->
+
+          <!-- 参考来源（仅 AI 消息显示） -->
+          <!--
+            显示 RAG 检索到的知识来源
+            包含标题和文件路径
+          -->
           <view class="refs" wx:if="{{item.references && item.references.length}}">
             <view class="refs-header">
               <text class="refs-icon">📖</text>
               <text class="refs-title">参考来源</text>
             </view>
+            <!-- 遍历参考资料列表 -->
             <view class="ref-item" wx:for="{{item.references}}" wx:for-item="ref" wx:key="source">
               <text class="ref-text">{{ref.title}}</text>
               <text class="ref-source">{{ref.source}}</text>
             </view>
           </view>
+
+          <!-- 推荐阅读（仅 AI 消息显示） -->
           <view class="recommend" wx:if="{{item.recommendations}}">
             <text class="recommend-label">💡 推荐阅读：</text>
             <text class="recommend-text">{{item.recommendations}}</text>
           </view>
         </view>
+
+        <!-- 用户头像（右侧） -->
         <view class="avatar user-avatar" wx:if="{{item.role==='user'}}">
           <text class="avatar-emoji">👤</text>
         </view>
       </view>
     </block>
 
-    <!-- 加载中 -->
+    <!-- ========== 加载动画 ========== -->
+    <!-- 等待 AI 回答时显示的打字动画 -->
     <view class="msg-row assistant" wx:if="{{sending}}" id="typing">
       <view class="avatar">
         <text class="avatar-emoji">🍵</text>
       </view>
+      <!-- 三个跳动的点 -->
       <view class="typing-bubble">
         <view class="typing-dot"></view>
         <view class="typing-dot"></view>
@@ -56,7 +111,8 @@
     </view>
   </scroll-view>
 
-  <!-- 快捷问题 -->
+  <!-- ========== 快捷问题 ========== -->
+  <!-- 有消息时显示底部快捷问题标签 -->
   <scroll-view class="quick-scroll" scroll-x enhanced show-scrollbar="{{false}}" wx:if="{{messages.length > 0}}">
     <view class="quick-questions">
       <view class="quick-tag" wx:for="{{quickList}}" wx:key="*this" bindtap="askQuick" data-q="{{item}}">
@@ -65,11 +121,27 @@
     </view>
   </scroll-view>
 
-  <!-- 输入栏 -->
+  <!-- ========== 输入栏 ========== -->
   <view class="input-bar">
+    <!-- 输入框容器 -->
     <view class="input-wrap">
+      <!--
+        input: 输入框组件
+        placeholder: 占位文本
+        placeholder-class: 占位文本样式类
+        value: 输入框值（双向绑定）
+        bindinput: 输入事件处理
+        confirm-type: 键盘确认按钮文本（"发送"）
+        bindconfirm: 确认事件处理（按回车触发）
+      -->
       <input class="input" placeholder="输入你的问题..." placeholder-class="input-placeholder" value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
     </view>
+
+    <!-- 发送按钮 -->
+    <!--
+      动态类名：有内容时添加 active 类（高亮显示）
+      bindtap: 点击事件处理
+    -->
     <view class="send-btn {{input ? 'active' : ''}}" bindtap="send">
       <text class="send-icon">↑</text>
     </view>
