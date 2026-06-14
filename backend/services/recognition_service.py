@@ -48,10 +48,7 @@ def save_and_recognize(file_bytes: bytes, filename: str, task: str = "variety") 
     save_path = UPLOAD_DIR / save_name
     save_path.write_bytes(compressed_bytes)
 
-    print(f"[recognition_service] save_path: {save_path}, exists: {save_path.exists()}, size: {save_path.stat().st_size if save_path.exists() else 0}")
-
     result = predict_image(str(save_path), task=task)
-    print(f"[recognition_service] predict result: {result}")
 
     result["image_url"] = f"/uploads/{save_name}"
     result["local_path"] = str(save_path)

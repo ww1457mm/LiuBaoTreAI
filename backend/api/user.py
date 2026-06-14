@@ -60,7 +60,8 @@ def wechat_login(body: WeChatLoginRequest, db: Session = Depends(get_db)):
     except WeChatError as e:
         logger.warning(f"微信登录失败: {e}")
         # 微信接口不可用时，降级为开发模式
-        dev_openid = f"dev_{body.code[:24]}"
+        # 使用固定的 dev_openid，避免每次 wx.login() 创建新用户
+        dev_openid = "dev_default_user"
         user = db.query(User).filter(User.openid == dev_openid).first()
         if not user:
             user = User(openid=dev_openid, nickname="茶友", avatar="")
