@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 LLM 客户端模块 - 阿里云百炼 API 调用封装
 
@@ -169,3 +170,8 @@ def _fallback_answer(question: str, context: Optional[str] = None) -> str:
         "您可询问历史文化、制作工艺、冲泡方法、存储收藏或健康功效等，"
         "配置 DASHSCOPE_API_KEY 后可启用云端大模型获得更智能的回答。"
     )
+=======
+"""兼容旧导入路径；实际已改为调用本地 Ollama。"""
+
+from ai_models.llm.ollama_client import chat_completion
+>>>>>>> 64cdc1b
