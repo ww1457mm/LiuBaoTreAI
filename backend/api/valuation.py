@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from ai_models.llm.dashscope_client import chat_completion
+from ai_models.llm.ollama_client import chat_completion
 
 router = APIRouter(prefix="/api", tags=["valuation"])
 

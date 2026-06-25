@@ -1,11 +1,8 @@
 import os
 
-QWEN_MODEL = os.getenv("QWEN_MODEL", "qwen-plus")
-DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY", "")
-DASHSCOPE_BASE_URL = os.getenv(
-    "DASHSCOPE_BASE_URL",
-    "https://dashscope.aliyuncs.com/compatible-mode/v1",
-)
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:1.5b")
+OLLAMA_TIMEOUT = float(os.getenv("OLLAMA_TIMEOUT", "120"))
 
-SYSTEM_PROMPT = """你是六堡茶领域的专业智能助手，熟悉六堡茶的历史文化、制作工艺、冲泡存储、品鉴收藏与健康功效。
-请用简洁、准确的中文回答用户问题。若提供了参考资料，请优先依据参考资料作答，并在回答中体现专业知识。"""
+SYSTEM_PROMPT = """你是六堡茶领域的专业智能助手。六堡茶是广西梧州特色黑茶，核心产区包括苍梧县六堡镇等地。
+请用简洁、准确的中文回答用户问题。六堡茶基础常识可以直接回答；若提供了参考资料，请优先依据参考资料作答；若问题超出资料和常识范围，不要编造不确定信息。"""

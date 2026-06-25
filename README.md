@@ -1,6 +1,6 @@
 # 六堡茶智能识别与知识问答系统
 
-基于微信小程序 + FastAPI + YOLOv8 + 通义千问 + BGE/FAISS RAG 的六堡茶智能服务平台。
+基于微信小程序 + FastAPI + YOLOv8 + Ollama/Qwen2.5 + BGE/FAISS RAG 的六堡茶智能服务平台。
 
 ## 功能模块
 
@@ -8,7 +8,7 @@
 |------|------|
 | 首页 | 轮播横幅、六堡茶知识卡片、快速提问、季节推荐 |
 | AI 病害识别 | 拍照/相册上传，YOLOv8 检测 8 类茶叶病害，自动压缩图片 |
-| 智能问答 | RAG 增强 + 通义千问，支持多轮对话，参考来源溯源 |
+| 智能问答 | RAG 增强 + Ollama/Qwen2.5，支持多轮对话，参考来源溯源 |
 | 产区地图 | 7 大产区展示、用户定位、地点搜索、路线规划 |
 | 知识库 | 7 大分类（14+ 篇文档），向量检索 + 关键词搜索 |
 | 品茶日记 | 冲泡记录、5 维评分、风味标签、图片上传 |
@@ -58,7 +58,7 @@ const BASE_URL = 'http://127.0.0.1:8001'   // 开发者工具调试
 
 | 变量 | 说明 |
 |------|------|
-| `DASHSCOPE_API_KEY` | 阿里云百炼，启用通义千问（推荐 qwen-plus） |
+| `OLLAMA_BASE_URL` / `OLLAMA_MODEL` | 本地 Ollama 大模型地址与模型名，默认 `http://localhost:11434` / `qwen2.5:1.5b` |
 | `SILICONFLOW_API_KEY` | 硅基流动 BGE 向量嵌入，无则用本地伪向量 |
 | `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 微信小程序登录（无配置时降级为开发模式） |
 | `ai_models/yolo/best.pt` | YOLOv8 权重，无则演示模式 |
@@ -114,7 +114,7 @@ LiuBaoTreAI/
 │
 ├── ai_models/                  # AI 模型
 │   ├── yolo/                  # YOLOv8 识别模型
-│   ├── llm/                   # 通义千问客户端
+│   ├── llm/                   # Ollama/Qwen2.5 客户端
 │   └── rag/                   # RAG（向量存储/检索/生成）
 │
 └── knowledge_base/            # 知识库原文（7大分类）
@@ -195,9 +195,10 @@ python ai_models/yolo/train.py
 USE_SQLITE=true
 SQLITE_URL=sqlite:///./backend/liubao_tea.db
 
-# 阿里云百炼 LLM
-DASHSCOPE_API_KEY=your_key_here
-QWEN_MODEL=qwen-plus
+# 本地 Ollama LLM
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:1.5b
+OLLAMA_TIMEOUT=120
 
 # 硅基流动向量嵌入
 SILICONFLOW_API_KEY=your_key_here
